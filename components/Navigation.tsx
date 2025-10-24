@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Menu, X, Leaf, Globe, LogIn, ShoppingCart, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import CartDrawer from './CartDrawer';
 
 export default function Navigation() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
   const { itemCount } = useCart();
@@ -91,14 +93,14 @@ export default function Navigation() {
               {t('nav.contact')}
             </Link>
 
-            <Link href="/cart" className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
+            <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
               <ShoppingCart size={22} />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             {user ? (
               <div className="relative">
@@ -125,6 +127,13 @@ export default function Navigation() {
                       onClick={() => setShowUserMenu(false)}
                     >
                       My Orders
+                    </Link>
+                    <Link
+                      href="/addresses"
+                      className="block px-4 py-2 hover:bg-gray-100 transition-colors"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Addresses
                     </Link>
                     <Link
                       href="/profile"
@@ -203,14 +212,14 @@ export default function Navigation() {
           </div>
 
           <div className="md:hidden flex items-center gap-4">
-            <Link href="/cart" className="relative text-[#1a1a1a]">
+            <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a]">
               <ShoppingCart size={22} />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-[#1a1a1a] drop-shadow-sm"
@@ -283,6 +292,13 @@ export default function Navigation() {
                       onClick={() => setIsOpen(false)}
                     >
                       My Orders
+                    </Link>
+                    <Link
+                      href="/addresses"
+                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Addresses
                     </Link>
                     <Link
                       href="/profile"
@@ -358,6 +374,7 @@ export default function Navigation() {
           </div>
         )}
       </div>
+      <CartDrawer open={showCartDrawer} onOpenChange={setShowCartDrawer} />
     </nav>
   );
 }

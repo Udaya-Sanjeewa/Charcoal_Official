@@ -2,15 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart } from 'lucide-react';
 import { getProductBySlug } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+import { useCart } from '@/contexts/CartContext';
+import { Button } from '@/components/ui/button';
 
 export default function ProductDetail({ params }: { params: { slug: string } }) {
+  const router = useRouter();
+  const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -39,6 +45,26 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
   const displayImages = product.images && product.images.length > 0
     ? product.images
     : [product.image];
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem('user_token');
+    if (!token) {
+      if (confirm('You need to be logged in to add items to cart. Would you like to login?')) {
+        router.push('/user-login');
+      }
+      return;
+    }
+
+    setAddingToCart(true);
+    try {
+      await addToCart(product.id, product.name, product.price, product.image);
+      alert(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    } finally {
+      setAddingToCart(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] pt-16">
@@ -137,17 +163,29 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               )}
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={addingToCart}
+                  className="flex-1 bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-6 px-6 rounded-xl font-semibold text-lg"
+                  size="lg"
+                >
+                  {addingToCart ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Adding to Cart...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      Add to Cart
+                    </>
+                  )}
+                </Button>
                 <Link
                   href="/contact"
-                  className="flex-1 border-2 border-[#7BB661] text-[#7BB661] py-4 px-6 rounded-xl font-semibold text-center hover:bg-[#7BB661] hover:text-white transition-all duration-300"
+                  className="flex-1 border-2 border-[#7BB661] text-[#7BB661] py-4 px-6 rounded-xl font-semibold text-center hover:bg-[#7BB661] hover:text-white transition-all duration-300 flex items-center justify-center"
                 >
                   Get Quote
-                </Link>
-                <Link
-                  href="/checkout"
-                  className="flex-1 btn-gradient text-white py-4 px-6 rounded-xl font-semibold text-center hover:shadow-lg transition-all duration-300"
-                >
-                  Order Now
                 </Link>
               </div>
 
