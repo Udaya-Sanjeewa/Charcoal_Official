@@ -113,6 +113,13 @@ export default function Navigation() {
                 {showUserMenu && (
                   <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border py-2 min-w-[180px] z-50">
                     <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 hover:bg-gray-100 transition-colors"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
                       href="/orders"
                       className="block px-4 py-2 hover:bg-gray-100 transition-colors"
                       onClick={() => setShowUserMenu(false)}
@@ -263,6 +270,13 @@ export default function Navigation() {
                 <>
                   <div className="px-3 py-2 border-t">
                     <p className="text-sm font-medium text-[#333333] mb-2">Welcome, {user.name}</p>
+                    <Link
+                      href="/dashboard"
+                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
                     <Link
                       href="/orders"
                       className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"

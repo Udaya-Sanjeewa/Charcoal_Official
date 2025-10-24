@@ -58,7 +58,7 @@ export default function RegisterPage() {
       localStorage.setItem('user_token', data.token);
       localStorage.setItem('user_data', JSON.stringify(data.user));
 
-      window.location.href = '/products';
+      window.location.href = '/dashboard';
     } catch (error: any) {
       setError(error.message || 'Registration failed. Please try again.');
     } finally {
