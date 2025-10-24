@@ -1,9 +1,16 @@
 import { supabase } from './supabase';
+import { getSupabaseClient } from './supabase-client';
 import { type Product } from './types';
+
+function getAuthenticatedClient() {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+  return token ? getSupabaseClient(token) : supabase;
+}
 
 export async function getAllProducts(): Promise<Product[]> {
   try {
-    const { data, error } = await supabase
+    const client = getAuthenticatedClient();
+    const { data, error } = await client
       .from('products')
       .select('*')
       .order('sort_order', { ascending: true });
@@ -82,12 +89,16 @@ export async function createProduct(product: Omit<Product, 'id' | 'created_at' |
 
 export async function updateProduct(id: string, product: Partial<Product>): Promise<boolean> {
   try {
-    const { error } = await supabase
+    const client = getAuthenticatedClient();
+    const { error } = await client
       .from('products')
       .update(product)
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Update error:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Error updating product:', error);
@@ -97,12 +108,16 @@ export async function updateProduct(id: string, product: Partial<Product>): Prom
 
 export async function deleteProduct(id: string): Promise<boolean> {
   try {
-    const { error } = await supabase
+    const client = getAuthenticatedClient();
+    const { error } = await client
       .from('products')
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Delete error:', error);
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error('Error deleting product:', error);

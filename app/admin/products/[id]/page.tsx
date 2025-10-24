@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase, type Product } from '@/lib/supabase';
+import { type Product } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase-client';
 import { ArrowLeft, Save, Loader2, Plus, X } from 'lucide-react';
 
 export default function EditProduct({ params }: { params: { id: string } }) {
@@ -39,6 +40,8 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
   const fetchProduct = async () => {
     try {
+      const token = localStorage.getItem('admin_token');
+      const supabase = getSupabaseClient(token || undefined);
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -59,6 +62,14 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     setSaving(true);
 
     try {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        alert('You must be logged in to edit products');
+        router.push('/login');
+        return;
+      }
+
+      const supabase = getSupabaseClient(token);
       const productData = {
         ...product,
         features: product.features?.filter(f => f.trim() !== ''),
@@ -71,20 +82,26 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           .from('products')
           .insert([productData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
       } else {
         const { error } = await supabase
           .from('products')
           .update(productData)
           .eq('id', params.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
       }
 
       router.push('/admin');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving product:', error);
-      alert('Error saving product. Please try again.');
+      alert(`Error saving product: ${error.message || 'Please try again.'}`);
     } finally {
       setSaving(false);
     }
