@@ -43,20 +43,20 @@ export default function UserLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
-      <div className="w-full max-w-md">
-        <div > className="space-y-1">
+      <div className="bg-white rounded-lg shadow w-full max-w-md">
+        <div className="p-6 border-b space-y-1">
           <div className="flex items-center justify-center mb-4">
             <div className="h-12 w-12 rounded-full bg-slate-900 flex items-center justify-center">
               <User className="h-6 w-6 text-white" />
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow"Title className="text-2xl text-center">Welcome back</h2>
-          <div className="bg-white rounded-lg shadow"Description className="text-center">
+          <h2 className="text-2xl font-bold text-center">Welcome back</h2>
+          <p className="text-center text-slate-600">
             Sign in to your account to continue shopping
           </p>
         </div>
         <form onSubmit={handleSubmit}>
-          <div > className="space-y-4">
+          <div className="p-6 space-y-4">
             {error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                 {error}
@@ -87,15 +87,15 @@ export default function UserLoginPage() {
               />
             </div>
           </div>
-          <div > className="flex flex-col space-y-4">
-            <Button
+          <div className="p-6 border-t flex flex-col space-y-4">
+            <button
               type="submit"
-              className="w-full"
+              className="w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               disabled={loading}
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Signing in...
                 </>
               ) : (
