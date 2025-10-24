@@ -1,0 +1,29 @@
+import './globals.css';
+import type { Metadata } from 'next';
+import Navigation from '@/components/Navigation';
+import WhatsAppFloat from '@/components/WhatsAppFloat';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+
+export const metadata: Metadata = {
+  title: 'EcoFuel Pro - Premium Firewood & Coconut Shell Charcoal',
+  description: 'High-quality, sustainable firewood and coconut shell charcoal for domestic and commercial use. Eco-friendly energy solutions delivered to your door. View our gallery of production facilities, stores, and delivery operations.',
+  keywords: 'firewood, coconut shell charcoal, sustainable fuel, eco-friendly, charcoal supplier',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className="scroll-smooth">
+      <body className="font-sans">
+        <LanguageProvider>
+          <Navigation />
+          <main>{children}</main>
+          <WhatsAppFloat />
+        </LanguageProvider>
+      </body>
+    </html>
+  );
+}
