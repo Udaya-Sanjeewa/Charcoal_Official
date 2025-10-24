@@ -8,7 +8,6 @@ import { useCart } from '@/contexts/CartContext';
 import { Filter, Grid2x2 as Grid, List, Loader2, ShoppingCart } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
 
 export default function Products() {
   const router = useRouter();
@@ -176,23 +175,23 @@ export default function Products() {
 
                     {product.category !== 'rentals' ? (
                       <div className="space-y-2">
-                        <Button
+                        <button
                           onClick={() => handleAddToCart(product)}
                           disabled={addingToCart === product.id}
-                          className="w-full bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-3 rounded-xl font-semibold transition-all duration-300"
+                          className="w-full bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                           {addingToCart === product.id ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4 animate-spin" />
                               Adding...
                             </>
                           ) : (
                             <>
-                              <ShoppingCart className="mr-2 h-4 w-4" />
+                              <ShoppingCart className="h-4 w-4" />
                               Add to Cart
                             </>
                           )}
-                        </Button>
+                        </button>
                         <Link
                           href={['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? `/products/${product.slug}` : '/contact'}
                           className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"

@@ -3,10 +3,8 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import { ShoppingCart, Trash2, Plus, Minus, X } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useEffect } from 'react';
 
 interface CartDrawerProps {
   open: boolean;
@@ -17,39 +15,65 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const router = useRouter();
   const { items, itemCount, totalAmount, updateQuantity, removeFromCart } = useCart();
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [open]);
+
   const handleCheckout = () => {
     onOpenChange(false);
     router.push('/checkout');
   };
 
+  if (!open) return null;
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+    <>
+      <div
+        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+        onClick={() => onOpenChange(false)}
+      />
+      <div className="fixed right-0 top-0 bottom-0 w-full sm:max-w-lg bg-white z-50 shadow-2xl flex flex-col animate-slide-in">
+        <div className="p-6 border-b flex items-center justify-between">
+          <h2 className="text-xl font-bold flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
             Shopping Cart ({itemCount})
-          </SheetTitle>
-        </SheetHeader>
+          </h2>
+          <button
+            onClick={() => onOpenChange(false)}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
         {items.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-12">
+          <div className="flex-1 flex flex-col items-center justify-center py-12 px-6">
             <ShoppingCart className="h-24 w-24 text-slate-300 mb-4" />
             <h3 className="text-xl font-semibold mb-2">Your cart is empty</h3>
             <p className="text-slate-600 mb-6 text-center">
               Start shopping to add items to your cart
             </p>
-            <Button onClick={() => {
-              onOpenChange(false);
-              router.push('/products');
-            }}>
+            <button
+              onClick={() => {
+                onOpenChange(false);
+                router.push('/products');
+              }}
+              className="bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold"
+            >
               Browse Products
-            </Button>
+            </button>
           </div>
         ) : (
           <>
-            <ScrollArea className="flex-1 -mx-6 px-6">
-              <div className="space-y-4 py-4">
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4">
                 {items.map((item) => (
                   <div key={item.product_id} className="flex gap-4 p-4 bg-slate-50 rounded-lg">
                     <div className="relative w-20 h-20 flex-shrink-0 bg-slate-200 rounded-lg overflow-hidden">
@@ -93,10 +117,10 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                   </div>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
 
-            <SheetFooter className="flex-col space-y-4 mt-4">
-              <div className="w-full space-y-2 border-t pt-4">
+            <div className="p-6 border-t bg-white space-y-4">
+              <div className="space-y-2">
                 <div className="flex justify-between text-sm text-slate-600">
                   <span>Subtotal ({itemCount} items)</span>
                   <span>${totalAmount.toFixed(2)}</span>
@@ -111,22 +135,37 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                 </div>
               </div>
 
-              <Button onClick={handleCheckout} size="lg" className="w-full">
+              <button
+                onClick={handleCheckout}
+                className="w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold text-lg"
+              >
                 Proceed to Checkout
-              </Button>
+              </button>
 
-              <Button
+              <button
                 onClick={() => onOpenChange(false)}
-                variant="outline"
-                size="lg"
-                className="w-full"
+                className="w-full border-2 border-slate-300 text-slate-700 py-3 rounded-lg hover:bg-slate-50 transition-colors font-semibold"
               >
                 Continue Shopping
-              </Button>
-            </SheetFooter>
+              </button>
+            </div>
           </>
         )}
-      </SheetContent>
-    </Sheet>
+      </div>
+
+      <style jsx>{`
+        @keyframes slide-in {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in {
+          animation: slide-in 0.3s ease-out;
+        }
+      `}</style>
+    </>
   );
 }

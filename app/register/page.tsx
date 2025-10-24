@@ -3,10 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Loader2, UserPlus } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -72,20 +68,20 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+      <div className="w-full max-w-md">
+        <div > className="space-y-1">
           <div className="flex items-center justify-center mb-4">
             <div className="h-12 w-12 rounded-full bg-slate-900 flex items-center justify-center">
               <UserPlus className="h-6 w-6 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">
+          <div className="bg-white rounded-lg shadow"Title className="text-2xl text-center">Create an account</h2>
+          <div className="bg-white rounded-lg shadow"Description className="text-center">
             Enter your details to register for an account
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <div > className="space-y-4">
             {error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                 {error}
@@ -93,8 +89,8 @@ export default function RegisterPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="fullName">Full Name</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="fullName"
                 type="text"
                 placeholder="John Doe"
@@ -105,8 +101,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="email">Email</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -117,8 +113,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone (Optional)</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="phone">Phone (Optional)</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="phone"
                 type="tel"
                 placeholder="+1 (555) 000-0000"
@@ -128,8 +124,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="password">Password</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="password"
                 type="password"
                 placeholder="••••••••"
@@ -140,8 +136,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="confirmPassword">Confirm Password</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
@@ -150,8 +146,8 @@ export default function RegisterPage() {
                 required
               />
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
+          </div>
+          <div > className="flex flex-col space-y-4">
             <Button
               type="submit"
               className="w-full"
@@ -165,7 +161,7 @@ export default function RegisterPage() {
               ) : (
                 'Create account'
               )}
-            </Button>
+            </button>
 
             <div className="text-sm text-center text-slate-600">
               Already have an account?{' '}
@@ -173,9 +169,9 @@ export default function RegisterPage() {
                 Sign in
               </Link>
             </div>
-          </CardFooter>
+          </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

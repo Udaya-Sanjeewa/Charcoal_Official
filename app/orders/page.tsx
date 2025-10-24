@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getSupabaseClient } from '@/lib/supabase-client';
-import { Card } from '@/components/ui/card';
 import { Package, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface Order {
@@ -91,18 +90,18 @@ export default function OrdersPage() {
         </div>
 
         {orders.length === 0 ? (
-          <Card className="p-12 text-center">
+          <div className="bg-white rounded-lg shadow p-12 text-center">
             <Package className="h-16 w-16 mx-auto text-slate-300 mb-4" />
             <h2 className="text-2xl font-semibold mb-2">No orders yet</h2>
             <p className="text-slate-600 mb-6">Start shopping to place your first order</p>
             <Link href="/products" className="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-800 transition-colors">
               Browse Products
             </Link>
-          </Card>
+          </div>
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <Card key={order.id} className="p-6">
+              <div key={order.id} className="bg-white rounded-lg shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-semibold">Order #{order.order_number}</h3>
@@ -139,7 +138,7 @@ export default function OrdersPage() {
                     </span>
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         )}

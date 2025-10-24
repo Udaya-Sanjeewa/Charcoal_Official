@@ -3,10 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseClient } from '@/lib/supabase-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
 import { Loader2, User } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -115,11 +111,11 @@ export default function ProfilePage() {
           <p className="text-slate-600">Manage your account information</p>
         </div>
 
-        <Card className="p-6">
+        <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="full_name">Full Name</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="full_name"
                 value={profile.full_name}
                 onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
@@ -128,8 +124,8 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="phone">Phone</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="phone"
                 type="tel"
                 value={profile.phone}
@@ -138,8 +134,8 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="address">Address</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="address"
                 value={profile.address}
                 onChange={(e) => setProfile({ ...profile, address: e.target.value })}
@@ -148,8 +144,8 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
+                <label className="block text-sm font-medium" htmlFor="city">City</label>
+                <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                   id="city"
                   value={profile.city}
                   onChange={(e) => setProfile({ ...profile, city: e.target.value })}
@@ -157,8 +153,8 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Input
+                <label className="block text-sm font-medium" htmlFor="state">State</label>
+                <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                   id="state"
                   value={profile.state}
                   onChange={(e) => setProfile({ ...profile, state: e.target.value })}
@@ -167,15 +163,15 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="zip_code">ZIP Code</Label>
-              <Input
+              <label className="block text-sm font-medium" htmlFor="zip_code">ZIP Code</label>
+              <input className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 id="zip_code"
                 value={profile.zip_code}
                 onChange={(e) => setProfile({ ...profile, zip_code: e.target.value })}
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={saving}>
+            <button type="submit" className="w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled={saving}>
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -184,9 +180,9 @@ export default function ProfilePage() {
               ) : (
                 'Save Changes'
               )}
-            </Button>
+            </button>
           </form>
-        </Card>
+        </div>
       </div>
     </div>
   );

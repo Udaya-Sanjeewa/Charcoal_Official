@@ -8,7 +8,6 @@ import { getProductBySlug } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
 
 export default function ProductDetail({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -163,24 +162,23 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               )}
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button
+                <button
                   onClick={handleAddToCart}
                   disabled={addingToCart}
-                  className="flex-1 bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-6 px-6 rounded-xl font-semibold text-lg"
-                  size="lg"
+                  className="flex-1 bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-6 px-6 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {addingToCart ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin" />
                       Adding to Cart...
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      <ShoppingCart className="h-5 w-5" />
                       Add to Cart
                     </>
                   )}
-                </Button>
+                </button>
                 <Link
                   href="/contact"
                   className="flex-1 border-2 border-[#7BB661] text-[#7BB661] py-4 px-6 rounded-xl font-semibold text-center hover:bg-[#7BB661] hover:text-white transition-all duration-300 flex items-center justify-center"

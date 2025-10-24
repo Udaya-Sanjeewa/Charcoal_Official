@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseClient } from '@/lib/supabase-client';
 import { useCart } from '@/contexts/CartContext';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   User,
   Package,
@@ -133,8 +131,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="pt-6">
+          <div className="bg-white rounded-lg shadow">
+            <div className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Total Orders</p>
@@ -144,11 +142,11 @@ export default function DashboardPage() {
                   <Package className="h-6 w-6 text-blue-600" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="pt-6">
+          <div className="bg-white rounded-lg shadow">
+            <div className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Pending Orders</p>
@@ -158,11 +156,11 @@ export default function DashboardPage() {
                   <Clock className="h-6 w-6 text-yellow-600" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="pt-6">
+          <div className="bg-white rounded-lg shadow">
+            <div className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Completed</p>
@@ -172,11 +170,11 @@ export default function DashboardPage() {
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="pt-6">
+          <div className="bg-white rounded-lg shadow">
+            <div className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Cart Items</p>
@@ -186,31 +184,31 @@ export default function DashboardPage() {
                   <ShoppingCart className="h-6 w-6 text-orange-600" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b">
                 <div className="flex items-center justify-between">
-                  <CardTitle>Recent Orders</CardTitle>
+                  <h3 className="text-xl font-bold">Recent Orders</h3>
                   <Link href="/orders">
-                    <Button variant="ghost" size="sm">
+                    <button className="text-slate-600 hover:text-slate-900 text-sm">
                       View All
                       <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    </button>
                   </Link>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </div>
+              <div className="p-6">
                 {recentOrders.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="h-16 w-16 mx-auto text-slate-300 mb-4" />
                     <p className="text-slate-600 mb-4">No orders yet</p>
                     <Link href="/products">
-                      <Button>Start Shopping</Button>
+                      <button className="bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-800 font-semibold">Start Shopping</button>
                     </Link>
                   </div>
                 ) : (
@@ -240,19 +238,19 @@ export default function DashboardPage() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shopping Cart</CardTitle>
-                <CardDescription>
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b">
+                <h3 className="text-xl font-bold">Shopping Cart</h3>
+                <p className="text-slate-600">
                   {itemCount === 0 ? 'Your cart is empty' : `${itemCount} item${itemCount !== 1 ? 's' : ''} in cart`}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+                </p>
+              </div>
+              <div className="p-6">
                 {itemCount > 0 ? (
                   <div className="space-y-4">
                     <div className="flex justify-between items-center pb-4 border-b">
@@ -260,10 +258,10 @@ export default function DashboardPage() {
                       <span className="text-2xl font-bold text-slate-900">${totalAmount.toFixed(2)}</span>
                     </div>
                     <Link href="/cart" className="block">
-                      <Button className="w-full">
+                      < button className="w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold">
                         <ShoppingCart className="mr-2 h-4 w-4" />
                         View Cart
-                      </Button>
+                      </button>
                     </Link>
                   </div>
                 ) : (
@@ -271,44 +269,44 @@ export default function DashboardPage() {
                     <ShoppingCart className="h-12 w-12 mx-auto text-slate-300 mb-3" />
                     <p className="text-slate-600 mb-4 text-sm">Start adding items to your cart</p>
                     <Link href="/products">
-                      <Button className="w-full">Browse Products</Button>
+                      <button className="w-full">Browse Products</button>
                     </Link>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b">
+                <h3 className="text-xl font-bold">Quick Actions</h3>
+              </div>
+              <div className="space-y-3">
                 <Link href="/products">
-                  <Button variant="outline" className="w-full justify-start">
+                  < button className="w-full justify-start border-2 border-slate-300 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-50 transition-colors">
                     <TrendingUp className="mr-2 h-4 w-4" />
                     Browse Products
-                  </Button>
+                  </button>
                 </Link>
                 <Link href="/orders">
-                  <Button variant="outline" className="w-full justify-start">
+                  < button className="w-full justify-start border-2 border-slate-300 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-50 transition-colors">
                     <Package className="mr-2 h-4 w-4" />
                     My Orders
-                  </Button>
+                  </button>
                 </Link>
                 <Link href="/profile">
-                  <Button variant="outline" className="w-full justify-start">
+                  < button className="w-full justify-start border-2 border-slate-300 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-50 transition-colors">
                     <Settings className="mr-2 h-4 w-4" />
                     Account Settings
-                  </Button>
+                  </button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-              <CardHeader>
-                <CardTitle>Account Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-lg shadow p-6">
+              <div className="p-6 border-b">
+                <h3 className="text-xl font-bold">Account Information</h3>
+              </div>
+              <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <User className="h-5 w-5 mt-0.5 opacity-80" />
                   <div>
@@ -333,30 +331,28 @@ export default function DashboardPage() {
                   </div>
                 )}
                 <Link href="/profile" className="block mt-4">
-                  <Button variant="secondary" className="w-full">
+                  < button className="w-full bg-white text-slate-900 py-2 px-4 rounded-lg hover:bg-slate-100 transition-colors">
                     Edit Profile
-                  </Button>
+                  </button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
 
-        <Card className="bg-gradient-to-r from-slate-900 to-slate-800 text-white">
-          <CardContent className="py-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Need help with your order?</h2>
-                <p className="opacity-90">Our customer support team is here to assist you</p>
-              </div>
-              <Link href="/contact">
-                <Button size="lg" variant="secondary">
-                  Contact Support
-                </Button>
-              </Link>
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-lg shadow p-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Need help with your order?</h2>
+              <p className="opacity-90">Our customer support team is here to assist you</p>
             </div>
-          </CardContent>
-        </Card>
+            <Link href="/contact">
+              <button className="bg-white text-slate-900 px-6 py-3 rounded-lg hover:bg-slate-100 font-semibold">
+                Contact Support
+              </button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

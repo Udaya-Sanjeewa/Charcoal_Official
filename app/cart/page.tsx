@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 
 export default function CartPage() {
@@ -33,9 +31,9 @@ export default function CartPage() {
               Start shopping to add items to your cart
             </p>
             <Link href="/products">
-              <Button size="lg">
+              <button className="bg-slate-900 text-white px-8 py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold text-lg">
                 Browse Products
-              </Button>
+              </button>
             </Link>
           </div>
         </div>
@@ -58,7 +56,7 @@ export default function CartPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => (
-              <Card key={item.product_id} className="p-6">
+              <div key={item.product_id} className="bg-white rounded-lg shadow p-6">
                 <div className="flex gap-6">
                   <div className="relative w-24 h-24 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden">
                     <Image
@@ -100,12 +98,12 @@ export default function CartPage() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-24">
+            <div className="bg-white rounded-lg shadow p-6 sticky top-24">
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
 
               <div className="space-y-4 mb-6">
@@ -125,20 +123,19 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button
-                size="lg"
-                className="w-full mb-3"
+              <button
+                className="w-full mb-3 bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold text-lg"
                 onClick={() => router.push('/checkout')}
               >
                 Proceed to Checkout
-              </Button>
+              </button>
 
               <Link href="/products">
-                <Button variant="outline" size="lg" className="w-full">
+                <button className="w-full border-2 border-slate-300 text-slate-700 py-3 rounded-lg hover:bg-slate-50 transition-colors font-semibold">
                   Continue Shopping
-                </Button>
+                </button>
               </Link>
-            </Card>
+            </div>
           </div>
         </div>
       </div>
