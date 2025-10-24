@@ -37,7 +37,7 @@ export default function UserLoginPage() {
       localStorage.setItem('user_token', data.token);
       localStorage.setItem('user_data', JSON.stringify(data.user));
 
-      router.push('/products');
+      window.location.href = '/products';
     } catch (error: any) {
       setError(error.message || 'Invalid email or password');
     } finally {
