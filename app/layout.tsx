@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { CartProvider } from '@/contexts/CartContext';
 
 export const metadata: Metadata = {
   title: 'EcoFuel Pro - Premium Firewood & Coconut Shell Charcoal',
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="font-sans">
         <LanguageProvider>
-          <Navigation />
-          <main>{children}</main>
-          <WhatsAppFloat />
+          <CartProvider>
+            <Navigation />
+            <main>{children}</main>
+            <WhatsAppFloat />
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -2,17 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Filter, Grid2x2 as Grid, List, Loader2 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { Filter, Grid2x2 as Grid, List, Loader2, ShoppingCart } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
 
 export default function Products() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const { t } = useLanguage();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -34,6 +40,26 @@ export default function Products() {
   const filteredProducts = selectedCategory === 'all'
     ? products
     : products.filter(product => product.category === selectedCategory);
+
+  const handleAddToCart = async (product: Product) => {
+    const token = localStorage.getItem('user_token');
+    if (!token) {
+      if (confirm('You need to be logged in to add items to cart. Would you like to login?')) {
+        router.push('/user-login');
+      }
+      return;
+    }
+
+    setAddingToCart(product.id);
+    try {
+      await addToCart(product.id, product.name, product.price, product.image);
+      alert(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] pt-16">
@@ -147,19 +173,41 @@ export default function Products() {
                         <span className="text-gray-500 ml-2">{t(`common.${product.unit.replace(/\s+/g, '_')}`)}</span>
                       </div>
                     </div>
-                    <Link 
-                      href={
-                        product.category === 'rentals' 
-                          ? '/bbq-rentals'
-                          : ['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug)
-                            ? `/products/${product.slug}`
-                            : '/contact'
-                      }
-                      className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
-                    >
-                      {product.category === 'rentals' ? 'View Rentals' : 
-                       ['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? t('common.view_details') : t('common.contact_to_order')}
-                    </Link>
+
+                    {product.category !== 'rentals' ? (
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() => handleAddToCart(product)}
+                          disabled={addingToCart === product.id}
+                          className="w-full bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-3 rounded-xl font-semibold transition-all duration-300"
+                        >
+                          {addingToCart === product.id ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Adding...
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingCart className="mr-2 h-4 w-4" />
+                              Add to Cart
+                            </>
+                          )}
+                        </Button>
+                        <Link
+                          href={['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? `/products/${product.slug}` : '/contact'}
+                          className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                        >
+                          {['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? t('common.view_details') : t('common.contact_to_order')}
+                        </Link>
+                      </div>
+                    ) : (
+                      <Link
+                        href="/bbq-rentals"
+                        className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                      >
+                        View Rentals
+                      </Link>
+                    )}
                   </div>
                 </div>
                 </div>
