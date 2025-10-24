@@ -87,6 +87,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const supabase = getSupabaseClient(token);
 
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        alert('Please log in to add items to cart');
+        return;
+      }
+
       const existingItem = items.find(item => item.product_id === productId);
 
       if (existingItem) {
@@ -96,21 +103,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
           .from('cart_items')
           .insert([
             {
+              user_id: user.id,
               product_id: productId,
               quantity,
             },
           ]);
 
         if (error) throw error;
-
-        setItems(prev => [...prev, {
-          id: '',
-          product_id: productId,
-          product_name: productName,
-          product_price: productPrice,
-          product_image: productImage,
-          quantity,
-        }]);
 
         await refreshCart();
       }
