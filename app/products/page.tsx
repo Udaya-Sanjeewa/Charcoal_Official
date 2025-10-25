@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Filter, Grid2x2 as Grid, List, Loader2, Search } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { Filter, Grid2x2 as Grid, List, Loader2, Search, ShoppingCart } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 
@@ -16,6 +17,7 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -178,21 +180,32 @@ export default function Products() {
                       </div>
                     </div>
 
-                    {product.category !== 'rentals' ? (
-                      <Link
-                        href={['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? `/products/${product.slug}` : '/contact'}
-                        className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
-                      >
-                        {['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? t('common.view_details') : t('common.contact_to_order')}
-                      </Link>
-                    ) : (
-                      <Link
-                        href="/bbq-rentals"
-                        className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
-                      >
-                        View Rentals
-                      </Link>
-                    )}
+                    <div className="flex gap-2">
+                      {product.category !== 'rentals' ? (
+                        <>
+                          <button
+                            onClick={() => addToCart(product)}
+                            className="flex-1 bg-[#EA580C] hover:bg-[#D97706] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                          >
+                            <ShoppingCart size={18} />
+                            Add to Cart
+                          </button>
+                          <Link
+                            href={`/products/${product.slug}`}
+                            className="flex-shrink-0 border-2 border-[#EA580C] text-[#EA580C] hover:bg-[#EA580C] hover:text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                          >
+                            View
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          href="/bbq-rentals"
+                          className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                        >
+                          View Rentals
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
                 </div>

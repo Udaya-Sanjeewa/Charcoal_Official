@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu, X, Leaf, Globe, LogIn, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CartSheet from '@/components/CartSheet';
 
 export default function Navigation() {
   const router = useRouter();
@@ -88,6 +89,8 @@ export default function Navigation() {
             >
               {t('nav.contact')}
             </Link>
+
+            <CartSheet />
 
             {user ? (
               <div className="relative">

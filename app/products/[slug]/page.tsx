@@ -3,16 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2 } from 'lucide-react';
+import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart, Minus, Plus } from 'lucide-react';
 import { getProductBySlug } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+import { useCart } from '@/contexts/CartContext';
 
 export default function ProductDetail({ params }: { params: { slug: string } }) {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(0);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -142,21 +145,50 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
                 </div>
               )}
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="mb-8 space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                  <span className="text-sm font-semibold text-gray-700">Quantity:</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-lg hover:border-[#D97706] transition-colors"
+                    >
+                      <Minus size={18} />
+                    </button>
+                    <span className="w-16 text-center text-lg font-bold">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-lg hover:border-[#D97706] transition-colors"
+                    >
+                      <Plus size={18} />
+                    </button>
+                  </div>
+                </div>
+
                 <button
-                  onClick={handleContactUs}
-                  className="flex-1 bg-[#D97706] hover:bg-[#4B2E05] text-white py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300"
+                  onClick={() => addToCart(product, quantity)}
+                  className="w-full bg-[#EA580C] hover:bg-[#D97706] text-white py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  <Phone className="h-5 w-5" />
-                  Contact Us to Order
+                  <ShoppingCart className="h-5 w-5" />
+                  Add to Cart
                 </button>
-                <Link
-                  href="/contact"
-                  className="flex-1 border-2 border-[#D97706] text-[#D97706] hover:bg-[#D97706] hover:text-white py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300"
-                >
-                  <Mail className="h-5 w-5" />
-                  Get a Quote
-                </Link>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={handleContactUs}
+                    className="flex-1 border-2 border-[#D97706] text-[#D97706] hover:bg-[#D97706] hover:text-white py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300"
+                  >
+                    <Phone className="h-5 w-5" />
+                    Contact Us
+                  </button>
+                  <Link
+                    href="/contact"
+                    className="flex-1 border-2 border-[#D97706] text-[#D97706] hover:bg-[#D97706] hover:text-white py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300"
+                  >
+                    <Mail className="h-5 w-5" />
+                    Get a Quote
+                  </Link>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4 py-6 border-t border-gray-200">

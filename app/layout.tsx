@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { CartProvider } from '@/contexts/CartContext';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
@@ -20,10 +21,12 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="font-sans">
         <LanguageProvider>
-          <Navigation />
-          <main>{children}</main>
-          <WhatsAppFloat />
-          <Toaster position="top-right" richColors />
+          <CartProvider>
+            <Navigation />
+            <main>{children}</main>
+            <WhatsAppFloat />
+            <Toaster position="top-right" richColors />
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>
