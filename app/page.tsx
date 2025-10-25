@@ -90,37 +90,52 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section className="hero-bg min-h-screen flex items-center justify-center text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/vid01.mp4" type="video/mp4" />
+        </video>
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#4B2E05]/80 via-[#6B4E2E]/70 to-[#4B2E05]/80"></div>
+
+        {/* Content */}
+        <div className="container mx-auto px-4 text-center relative z-10">
           <div className="fade-in">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl">
               {t('home.hero.title')}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
               {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/contact" 
-                className="btn-gradient text-white px-8 py-4 rounded-full text-lg font-semibold inline-flex items-center justify-center"
+              <Link
+                href="/contact"
+                className="btn-gradient text-white px-8 py-4 rounded-full text-lg font-semibold inline-flex items-center justify-center shadow-xl hover:shadow-2xl"
               >
                 {t('home.hero.order_now')}
               </Link>
-              <Link 
-                href="/products" 
-                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center"
+              <Link
+                href="/products"
+                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center backdrop-blur-sm"
               >
                 {t('home.hero.view_products')}
               </Link>
-              <Link 
-                href="/gallery" 
-                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center"
+              <Link
+                href="/gallery"
+                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center backdrop-blur-sm"
               >
                 {t('home.hero.view_gallery')}
               </Link>
-              <Link 
-                href="/bbq-rentals" 
-                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center"
+              <Link
+                href="/bbq-rentals"
+                className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#1C1917] transition-all duration-300 inline-flex items-center justify-center backdrop-blur-sm"
               >
                 {t('home.hero.bbq_rentals')}
               </Link>
