@@ -54,10 +54,10 @@ export default function WishlistDrawer({ open, onOpenChange }: WishlistDrawerPro
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+        className="fixed inset-0 bg-black/50 z-[100] transition-opacity"
         onClick={() => onOpenChange(false)}
       />
-      <div className="fixed right-0 top-0 h-full w-full sm:max-w-lg bg-white z-50 shadow-2xl flex flex-col animate-slide-in overflow-hidden">
+      <div className="fixed right-0 top-0 h-full w-full sm:max-w-lg bg-white z-[101] shadow-2xl flex flex-col animate-slide-in overflow-hidden">
         <div className="p-4 border-b flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <Heart className="h-6 w-6" />
