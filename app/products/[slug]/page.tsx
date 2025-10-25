@@ -281,31 +281,6 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
           </div>
         </section>
       ) : null}
-
-      <section className="py-16 bg-[#333333] text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Order?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Contact us today for competitive pricing and fast delivery.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="btn-gradient text-white px-8 py-4 rounded-full text-lg font-semibold inline-flex items-center justify-center gap-2"
-            >
-              <Mail size={20} />
-              Get Quote
-            </Link>
-            <a
-              href="tel:+15551234567"
-              className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-[#333333] transition-all duration-300 inline-flex items-center justify-center gap-2"
-            >
-              <Phone size={20} />
-              Call Now
-            </a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
