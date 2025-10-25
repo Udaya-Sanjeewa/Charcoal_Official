@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, Leaf, Globe, LogIn, User, LogOut } from 'lucide-react';
+import { Menu, X, Leaf, Globe, LogIn, User, LogOut, Heart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 import CartSheet from '@/components/CartSheet';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function Navigation() {
   const router = useRouter();
@@ -15,6 +18,7 @@ export default function Navigation() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
+  const { itemCount } = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,6 +93,23 @@ export default function Navigation() {
             >
               {t('nav.contact')}
             </Link>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="relative"
+              onClick={() => router.push('/wishlist')}
+            >
+              <Heart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <Badge
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-pink-600 hover:bg-pink-700"
+                  variant="default"
+                >
+                  {itemCount}
+                </Badge>
+              )}
+            </Button>
 
             <CartSheet />
 

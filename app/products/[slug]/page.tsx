@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart, Minus, Plus, Heart } from 'lucide-react';
 import { getProductBySlug } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 export default function ProductDetail({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -165,13 +167,25 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
                   </div>
                 </div>
 
-                <button
-                  onClick={() => addToCart(product, quantity)}
-                  className="w-full bg-[#EA580C] hover:bg-[#D97706] text-white py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Add to Cart
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => addToCart(product, quantity)}
+                    className="flex-1 bg-[#EA580C] hover:bg-[#D97706] text-white py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => addToWishlist(product)}
+                    className={`flex-shrink-0 py-6 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl ${
+                      isInWishlist(product.id)
+                        ? 'bg-pink-600 text-white hover:bg-pink-700'
+                        : 'border-2 border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white'
+                    }`}
+                  >
+                    <Heart className="h-5 w-5" fill={isInWishlist(product.id) ? 'currentColor' : 'none'} />
+                  </button>
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button

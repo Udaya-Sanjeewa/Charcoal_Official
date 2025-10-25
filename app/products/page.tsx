@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { Filter, Grid2x2 as Grid, List, Loader2, Search, ShoppingCart } from 'lucide-react';
+import { useWishlist } from '@/contexts/WishlistContext';
+import { Filter, Grid2x2 as Grid, List, Loader2, Search, ShoppingCart, Heart } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 
@@ -18,6 +19,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -189,6 +191,16 @@ export default function Products() {
                           >
                             <ShoppingCart size={18} />
                             Add to Cart
+                          </button>
+                          <button
+                            onClick={() => addToWishlist(product)}
+                            className={`flex-shrink-0 py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 ${
+                              isInWishlist(product.id)
+                                ? 'bg-pink-600 text-white hover:bg-pink-700'
+                                : 'border-2 border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white'
+                            }`}
+                          >
+                            <Heart size={18} fill={isInWishlist(product.id) ? 'currentColor' : 'none'} />
                           </button>
                           <Link
                             href={`/products/${product.slug}`}

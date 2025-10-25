@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { WishlistProvider } from '@/contexts/WishlistContext';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
@@ -22,10 +23,12 @@ export default function RootLayout({
       <body className="font-sans">
         <LanguageProvider>
           <CartProvider>
-            <Navigation />
-            <main>{children}</main>
-            <WhatsAppFloat />
-            <Toaster position="top-right" richColors />
+            <WishlistProvider>
+              <Navigation />
+              <main>{children}</main>
+              <WhatsAppFloat />
+              <Toaster position="top-right" richColors />
+            </WishlistProvider>
           </CartProvider>
         </LanguageProvider>
       </body>
