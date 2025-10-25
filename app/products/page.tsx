@@ -48,9 +48,9 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] pt-16">
+    <div className="min-h-screen bg-[#FAF3E0] pt-16">
       {/* Header */}
-      <section className="bg-[#333333] text-white py-20">
+      <section className="bg-[#1C1917] text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             {t('products.title')}
@@ -71,7 +71,7 @@ export default function Products() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-transparent"
             />
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function Products() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Category Filter */}
             <div className="flex items-center gap-4 overflow-x-auto w-full md:w-auto">
-              <Filter className="text-[#333333]" size={20} />
+              <Filter className="text-[#1C1917]" size={20} />
               <div className="flex gap-2">
                 {categories.map((category) => (
                   <button
@@ -91,8 +91,8 @@ export default function Products() {
                     onClick={() => setSelectedCategory(category.id)}
                     className={`px-4 py-2 rounded-full transition-all duration-300 ${
                       selectedCategory === category.id
-                        ? 'bg-[#7BB661] text-white'
-                        : 'bg-gray-200 text-[#333333] hover:bg-gray-300'
+                        ? 'bg-[#D97706] text-white'
+                        : 'bg-gray-200 text-[#1C1917] hover:bg-gray-300'
                     }`}
                   >
                     {category.name}
@@ -106,7 +106,7 @@ export default function Products() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-full transition-all duration-300 ${
-                  viewMode === 'grid' ? 'bg-[#7BB661] text-white' : 'text-[#333333]'
+                  viewMode === 'grid' ? 'bg-[#D97706] text-white' : 'text-[#1C1917]'
                 }`}
               >
                 <Grid size={20} />
@@ -114,7 +114,7 @@ export default function Products() {
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-full transition-all duration-300 ${
-                  viewMode === 'list' ? 'bg-[#7BB661] text-white' : 'text-[#333333]'
+                  viewMode === 'list' ? 'bg-[#D97706] text-white' : 'text-[#1C1917]'
                 }`}
               >
                 <List size={20} />
@@ -129,7 +129,7 @@ export default function Products() {
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <Loader2 className="animate-spin text-[#7BB661]" size={48} />
+              <Loader2 className="animate-spin text-[#D97706]" size={48} />
             </div>
           ) : (
             <div className={`${viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3' : 'space-y-6'} gap-8`}>
@@ -150,7 +150,7 @@ export default function Products() {
                 <div className={`p-6 ${viewMode === 'list' ? 'md:w-2/3 md:flex md:flex-col md:justify-between' : ''}`}>
                   <div>
                     <Link href={`/products/${product.slug}`}>
-                      <h3 className="text-2xl font-bold text-[#333333] mb-2 hover:text-[#7BB661] transition-colors cursor-pointer">
+                      <h3 className="text-2xl font-bold text-[#1C1917] mb-2 hover:text-[#D97706] transition-colors cursor-pointer">
                         {t(`product.${product.name.toLowerCase().replace(/\s+/g, '_')}`)}
                       </h3>
                     </Link>
@@ -158,11 +158,11 @@ export default function Products() {
                     
                     {/* Features */}
                     <div className="mb-4">
-                      <h4 className="font-semibold text-[#333333] mb-2">Key Features:</h4>
+                      <h4 className="font-semibold text-[#1C1917] mb-2">Key Features:</h4>
                       <ul className="grid grid-cols-2 gap-1 text-sm text-gray-600">
                         {product.features.map((feature, index) => (
                           <li key={index} className="flex items-center">
-                            <span className="w-2 h-2 bg-[#7BB661] rounded-full mr-2"></span>
+                            <span className="w-2 h-2 bg-[#D97706] rounded-full mr-2"></span>
                             {feature}
                           </li>
                         ))}
@@ -173,7 +173,7 @@ export default function Products() {
                   <div>
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        <span className="text-3xl font-bold text-[#7BB661]">{product.price}</span>
+                        <span className="text-3xl font-bold text-[#D97706]">{product.price}</span>
                         <span className="text-gray-500 ml-2">{t(`common.${product.unit.replace(/\s+/g, '_')}`)}</span>
                       </div>
                     </div>
@@ -209,7 +209,7 @@ export default function Products() {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-16 bg-[#333333] text-white">
+      <section className="py-16 bg-[#1C1917] text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('products.custom_quote')}</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">

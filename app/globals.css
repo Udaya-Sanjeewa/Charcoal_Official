@@ -9,10 +9,13 @@ body {
 }
 
 :root {
-  --charcoal-gray: #333333;
-  --earthy-brown: #6B4E3D;
-  --leaf-green: #7BB661;
-  --warm-beige: #FAF7F2;
+  --dark-brown: #4B2E05;
+  --warm-orange: #D97706;
+  --forest-green: #166534;
+  --light-beige: #FAF3E0;
+  --charcoal-black: #1C1917;
+  --grayish-brown: #6B4E2E;
+  --burnt-orange: #EA580C;
 }
 
 @layer base {
@@ -46,12 +49,12 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #FAF7F2;
+    background-color: #FAF3E0;
   }
 }
 
 .hero-bg {
-  background-image: linear-gradient(135deg, rgba(51, 51, 51, 0.7) 0%, rgba(107, 78, 61, 0.6) 100%), url('https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+  background-image: linear-gradient(135deg, rgba(75, 46, 5, 0.8) 0%, rgba(107, 78, 46, 0.7) 100%), url('https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -72,21 +75,21 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #7BB661 0%, #6B4E3D 100%);
+  background: linear-gradient(135deg, #D97706 0%, #EA580C 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #7BB661 0%, #6B4E3D 100%);
+  background: linear-gradient(135deg, #D97706 0%, #EA580C 100%);
   transition: all 0.3s ease;
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(135deg, #6B4E3D 0%, #7BB661 100%);
+  background: linear-gradient(135deg, #EA580C 0%, #D97706 100%);
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(123, 182, 97, 0.3);
+  box-shadow: 0 10px 25px rgba(234, 88, 12, 0.3);
 }
 
 .card-hover {

@@ -45,8 +45,8 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <Leaf className="h-8 w-8 text-[#7BB661]" />
-            <span className="text-xl font-bold text-[#1a1a1a] drop-shadow-sm">
+            <Leaf className="h-8 w-8 text-[#166534]" />
+            <span className="text-xl font-bold text-[#4B2E05] drop-shadow-sm">
               EcoFuel Pro
             </span>
           </Link>
@@ -54,37 +54,37 @@ export default function Navigation() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.home')}
             </Link>
             <Link
               href="/products"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.products')}
             </Link>
             <Link
               href="/about"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.about')}
             </Link>
             <Link
               href="/gallery"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.gallery')}
             </Link>
             <Link
               href="/bbq-rentals"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.bbq_rentals')}
             </Link>
             <Link
               href="/contact"
-              className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+              className="text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.contact')}
             </Link>
@@ -93,7 +93,7 @@ export default function Navigation() {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold"
+                  className="flex items-center gap-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold"
                 >
                   <User size={20} />
                   <span>{user.name}</span>
@@ -146,14 +146,14 @@ export default function Navigation() {
               <>
                 <Link
                   href="/user-login"
-                  className="flex items-center gap-2 text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold"
+                  className="flex items-center gap-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold"
                 >
                   <LogIn size={18} />
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-[#7BB661] text-white px-4 py-2 rounded-lg hover:bg-[#6B4E3D] transition-all duration-300 font-semibold"
+                  className="bg-[#EA580C] text-white px-4 py-2 rounded-lg hover:bg-[#D97706] transition-all duration-300 font-semibold"
                 >
                   Sign Up
                 </Link>
@@ -163,7 +163,7 @@ export default function Navigation() {
             <div className="relative">
               <button
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className="flex items-center gap-2 text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
+                className="flex items-center gap-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-semibold drop-shadow-sm"
               >
                 <Globe size={20} />
                 <span>{language === 'en' ? 'EN' : 'සි'}</span>
@@ -177,7 +177,7 @@ export default function Navigation() {
                       setShowLanguageMenu(false);
                     }}
                     className={`w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors font-medium ${
-                      language === 'en' ? 'bg-[#7BB661] text-white' : 'text-[#333333]'
+                      language === 'en' ? 'bg-[#EA580C] text-white' : 'text-[#1C1917]'
                     }`}
                   >
                     English
@@ -188,7 +188,7 @@ export default function Navigation() {
                       setShowLanguageMenu(false);
                     }}
                     className={`w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors font-medium ${
-                      language === 'si' ? 'bg-[#7BB661] text-white' : 'text-[#333333]'
+                      language === 'si' ? 'bg-[#EA580C] text-white' : 'text-[#1C1917]'
                     }`}
                   >
                     සිංහල
@@ -201,7 +201,7 @@ export default function Navigation() {
           <div className="md:hidden flex items-center gap-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-[#1a1a1a] drop-shadow-sm"
+              className="p-2 rounded-md text-[#1C1917] drop-shadow-sm"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -213,42 +213,42 @@ export default function Navigation() {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-white/95 backdrop-blur-md rounded-lg mt-2 shadow-lg">
               <Link
                 href="/"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.home')}
               </Link>
               <Link
                 href="/products"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.products')}
               </Link>
               <Link
                 href="/about"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.about')}
               </Link>
               <Link
                 href="/gallery"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.gallery')}
               </Link>
               <Link
                 href="/bbq-rentals"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.bbq_rentals')}
               </Link>
               <Link
                 href="/contact"
-                className="block px-3 py-2 text-[#333333] hover:text-[#7BB661] transition-colors font-medium"
+                className="block px-3 py-2 text-[#1C1917] hover:text-[#D97706] transition-colors font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {t('nav.contact')}
@@ -257,31 +257,31 @@ export default function Navigation() {
               {user ? (
                 <>
                   <div className="px-3 py-2 border-t">
-                    <p className="text-sm font-medium text-[#333333] mb-2">Welcome, {user.name}</p>
+                    <p className="text-sm font-medium text-[#1C1917] mb-2">Welcome, {user.name}</p>
                     <Link
                       href="/dashboard"
-                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      className="block py-2 text-[#1C1917] hover:text-[#D97706] transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
                       href="/orders"
-                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      className="block py-2 text-[#1C1917] hover:text-[#D97706] transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       My Orders
                     </Link>
                     <Link
                       href="/addresses"
-                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      className="block py-2 text-[#1C1917] hover:text-[#D97706] transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       Addresses
                     </Link>
                     <Link
                       href="/profile"
-                      className="block py-2 text-[#333333] hover:text-[#7BB661] transition-colors"
+                      className="block py-2 text-[#1C1917] hover:text-[#D97706] transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       Profile
@@ -302,7 +302,7 @@ export default function Navigation() {
                 <>
                   <Link
                     href="/user-login"
-                    className="flex items-center gap-2 mx-3 my-2 px-3 py-2 border-2 border-[#7BB661] text-[#7BB661] rounded-lg hover:bg-[#7BB661] hover:text-white transition-all duration-300 font-semibold justify-center"
+                    className="flex items-center gap-2 mx-3 my-2 px-3 py-2 border-2 border-[#EA580C] text-[#EA580C] rounded-lg hover:bg-[#EA580C] hover:text-white transition-all duration-300 font-semibold justify-center"
                     onClick={() => setIsOpen(false)}
                   >
                     <LogIn size={18} />
@@ -310,7 +310,7 @@ export default function Navigation() {
                   </Link>
                   <Link
                     href="/register"
-                    className="flex items-center gap-2 mx-3 my-2 px-3 py-2 bg-[#7BB661] text-white rounded-lg hover:bg-[#6B4E3D] transition-all duration-300 font-semibold justify-center"
+                    className="flex items-center gap-2 mx-3 my-2 px-3 py-2 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-all duration-300 font-semibold justify-center"
                     onClick={() => setIsOpen(false)}
                   >
                     <User size={18} />
@@ -320,7 +320,7 @@ export default function Navigation() {
               )}
 
               <div className="px-3 py-2">
-                <div className="flex items-center gap-2 text-[#333333] mb-2 font-medium">
+                <div className="flex items-center gap-2 text-[#1C1917] mb-2 font-medium">
                   <Globe size={16} />
                   <span className="font-medium">Language</span>
                 </div>
@@ -331,7 +331,7 @@ export default function Navigation() {
                       setIsOpen(false);
                     }}
                     className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                      language === 'en' ? 'bg-[#7BB661] text-white' : 'bg-gray-200 text-[#333333]'
+                      language === 'en' ? 'bg-[#EA580C] text-white' : 'bg-gray-200 text-[#1C1917]'
                     }`}
                   >
                     English
@@ -342,7 +342,7 @@ export default function Navigation() {
                       setIsOpen(false);
                     }}
                     className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                      language === 'si' ? 'bg-[#7BB661] text-white' : 'bg-gray-200 text-[#333333]'
+                      language === 'si' ? 'bg-[#EA580C] text-white' : 'bg-gray-200 text-[#1C1917]'
                     }`}
                   >
                     සිංහල
