@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { type Product } from '@/lib/supabase';
 import { getSupabaseClient } from '@/lib/supabase-client';
-import { ArrowLeft, Save, Loader2, Plus, X, Upload } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function EditProduct({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -60,12 +61,18 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!product.image) {
+      toast.error('Please upload at least one product image');
+      return;
+    }
+
     setSaving(true);
 
     try {
       const token = localStorage.getItem('admin_token');
       if (!token) {
-        alert('You must be logged in to edit products');
+        toast.error('You must be logged in to edit products');
         router.push('/login');
         return;
       }
@@ -158,22 +165,6 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     updateField('specifications', specs);
   };
 
-  const addImage = () => {
-    const currentImages = product.images || [];
-    updateField('images', [...currentImages, '']);
-  };
-
-  const updateImage = (index: number, value: string) => {
-    const currentImages = [...(product.images || [])];
-    currentImages[index] = value;
-    updateField('images', currentImages);
-  };
-
-  const removeImage = (index: number) => {
-    const currentImages = [...(product.images || [])];
-    currentImages.splice(index, 1);
-    updateField('images', currentImages);
-  };
 
   if (loading) {
     return (
@@ -312,60 +303,26 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           </div>
 
           <div className="mt-6">
-            <label className="block text-sm font-semibold text-[#333333] mb-2">
-              Main Image URL *
+            <label className="block text-sm font-semibold text-[#333333] mb-4">
+              Product Images *
             </label>
-            <input
-              type="url"
-              required
-              value={product.image}
-              onChange={(e) => updateField('image', e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
-            />
-            {product.image && (
-              <div className="mt-3">
-                <img src={product.image} alt="Main preview" className="h-32 w-auto object-cover rounded-lg border-2 border-gray-200" />
-              </div>
-            )}
-          </div>
-
-          <div className="mt-6">
-            <label className="block text-sm font-semibold text-[#333333] mb-2">
-              Additional Images (Gallery)
-            </label>
-            <div className="space-y-3">
-              {product.images?.map((image, index) => (
-                <div key={index} className="flex gap-2 items-start">
-                  <div className="flex-1">
-                    <input
-                      type="url"
-                      value={image}
-                      onChange={(e) => updateImage(index, e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
-                    />
-                    {image && (
-                      <img src={image} alt={`Preview ${index + 1}`} className="mt-2 h-24 w-auto object-cover rounded-lg border border-gray-200" />
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="p-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addImage}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-colors"
-              >
-                <Upload size={18} />
-                Add Image URL
-              </button>
+            <div className="bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
+              <p className="text-sm text-gray-600 mb-4">
+                Upload product images. The first image will be used as the main product image.
+              </p>
+              <ImageUploader
+                images={[product.image || '', ...(product.images || [])].filter(img => img !== '')}
+                onImagesChange={(newImages) => {
+                  if (newImages.length > 0) {
+                    updateField('image', newImages[0]);
+                    updateField('images', newImages.slice(1));
+                  } else {
+                    updateField('image', '');
+                    updateField('images', []);
+                  }
+                }}
+                maxImages={10}
+              />
             </div>
           </div>
 

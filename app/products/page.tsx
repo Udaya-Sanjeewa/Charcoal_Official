@@ -151,7 +151,7 @@ export default function Products() {
                   <div>
                     <Link href={`/products/${product.slug}`}>
                       <h3 className="text-2xl font-bold text-[#1C1917] mb-2 hover:text-[#D97706] transition-colors cursor-pointer">
-                        {t(`product.${product.name.toLowerCase().replace(/\s+/g, '_')}`)}
+                        {product.name}
                       </h3>
                     </Link>
                     <p className="text-gray-600 mb-4">{product.description}</p>
