@@ -53,8 +53,8 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
         className="fixed inset-0 bg-black/50 z-50 transition-opacity"
         onClick={() => onOpenChange(false)}
       />
-      <div className="fixed right-0 top-0 bottom-0 w-full sm:max-w-lg bg-white z-50 shadow-2xl flex flex-col animate-slide-in">
-        <div className="p-6 border-b flex items-center justify-between">
+      <div className="fixed right-0 top-0 h-full w-full sm:max-w-lg bg-white z-50 shadow-2xl flex flex-col animate-slide-in overflow-hidden">
+        <div className="p-6 border-b flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
             <h2 className="text-xl font-bold">Shopping Cart</h2>
@@ -148,7 +148,7 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               </div>
             </div>
 
-            <div className="p-6 border-t bg-white space-y-4">
+            <div className="p-6 border-t bg-white space-y-4 flex-shrink-0">
               <div className="flex justify-between items-center text-lg font-bold">
                 <span>Total:</span>
                 <span className="text-blue-600">
