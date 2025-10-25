@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { type Product } from '@/lib/supabase';
 import { getSupabaseClient } from '@/lib/supabase-client';
-import { ArrowLeft, Save, Loader2, Plus, X } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, X, Upload } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function EditProduct({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -86,6 +87,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           console.error('Insert error:', error);
           throw error;
         }
+        toast.success('Product created successfully!');
       } else {
         const { error } = await supabase
           .from('products')
@@ -96,12 +98,15 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           console.error('Update error:', error);
           throw error;
         }
+        toast.success('Product updated successfully!');
       }
 
-      router.push('/admin');
+      setTimeout(() => {
+        router.push('/admin');
+      }, 500);
     } catch (error: any) {
       console.error('Error saving product:', error);
-      alert(`Error saving product: ${error.message || 'Please try again.'}`);
+      toast.error(`Error saving product: ${error.message || 'Please try again.'}`);
     } finally {
       setSaving(false);
     }
@@ -109,6 +114,14 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
   const updateField = (field: keyof Product, value: any) => {
     setProduct(prev => ({ ...prev, [field]: value }));
+
+    if (field === 'name') {
+      const slug = value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      setProduct(prev => ({ ...prev, slug }));
+    }
   };
 
   const addArrayItem = (field: 'features' | 'benefits') => {
@@ -145,21 +158,38 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     updateField('specifications', specs);
   };
 
+  const addImage = () => {
+    const currentImages = product.images || [];
+    updateField('images', [...currentImages, '']);
+  };
+
+  const updateImage = (index: number, value: string) => {
+    const currentImages = [...(product.images || [])];
+    currentImages[index] = value;
+    updateField('images', currentImages);
+  };
+
+  const removeImage = (index: number) => {
+    const currentImages = [...(product.images || [])];
+    currentImages.splice(index, 1);
+    updateField('images', currentImages);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] pt-16 flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#7BB661]" size={48} />
+      <div className="min-h-screen bg-[#FAF3E0] pt-16 flex items-center justify-center">
+        <Loader2 className="animate-spin text-[#EA580C]" size={48} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] pt-16">
+    <div className="min-h-screen bg-[#FAF3E0] pt-16">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link
             href="/admin"
-            className="inline-flex items-center gap-2 text-[#7BB661] hover:text-[#6B4E3D] transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-[#EA580C] hover:text-[#D97706] transition-colors mb-4"
           >
             <ArrowLeft size={20} />
             Back to Products
@@ -180,20 +210,21 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 required
                 value={product.name}
                 onChange={(e) => updateField('name', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-[#333333] mb-2">
-                Slug *
+                Slug (auto-generated) *
               </label>
               <input
                 type="text"
                 required
                 value={product.slug}
-                onChange={(e) => updateField('slug', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                readOnly
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
+                title="Auto-generated from product name"
               />
             </div>
 
@@ -205,7 +236,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 required
                 value={product.category}
                 onChange={(e) => updateField('category', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               >
                 <option value="firewood">Firewood</option>
                 <option value="charcoal">Charcoal</option>
@@ -224,7 +255,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 value={product.price}
                 onChange={(e) => updateField('price', e.target.value)}
                 placeholder="$45"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
             </div>
 
@@ -238,7 +269,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 value={product.unit}
                 onChange={(e) => updateField('unit', e.target.value)}
                 placeholder="per cord"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
             </div>
 
@@ -250,7 +281,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 type="number"
                 value={product.sort_order}
                 onChange={(e) => updateField('sort_order', parseInt(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
             </div>
           </div>
@@ -264,7 +295,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               rows={3}
               value={product.description}
               onChange={(e) => updateField('description', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
             />
           </div>
 
@@ -276,7 +307,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               rows={5}
               value={product.long_description || ''}
               onChange={(e) => updateField('long_description', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
             />
           </div>
 
@@ -289,8 +320,53 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               required
               value={product.image}
               onChange={(e) => updateField('image', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+              placeholder="https://example.com/image.jpg"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
             />
+            {product.image && (
+              <div className="mt-3">
+                <img src={product.image} alt="Main preview" className="h-32 w-auto object-cover rounded-lg border-2 border-gray-200" />
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-[#333333] mb-2">
+              Additional Images (Gallery)
+            </label>
+            <div className="space-y-3">
+              {product.images?.map((image, index) => (
+                <div key={index} className="flex gap-2 items-start">
+                  <div className="flex-1">
+                    <input
+                      type="url"
+                      value={image}
+                      onChange={(e) => updateImage(index, e.target.value)}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
+                    />
+                    {image && (
+                      <img src={image} alt={`Preview ${index + 1}`} className="mt-2 h-24 w-auto object-cover rounded-lg border border-gray-200" />
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="p-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addImage}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-colors"
+              >
+                <Upload size={18} />
+                Add Image URL
+              </button>
+            </div>
           </div>
 
           <div className="mt-6">
@@ -304,7 +380,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     type="text"
                     value={feature}
                     onChange={(e) => updateArrayItem('features', index, e.target.value)}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
                   />
                   <button
                     type="button"
@@ -318,7 +394,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               <button
                 type="button"
                 onClick={() => addArrayItem('features')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#7BB661] text-white rounded-lg hover:bg-[#6B4E3D] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-colors"
               >
                 <Plus size={18} />
                 Add Feature
@@ -337,7 +413,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     type="text"
                     value={benefit}
                     onChange={(e) => updateArrayItem('benefits', index, e.target.value)}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
                   />
                   <button
                     type="button"
@@ -351,7 +427,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               <button
                 type="button"
                 onClick={() => addArrayItem('benefits')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#7BB661] text-white rounded-lg hover:bg-[#6B4E3D] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-colors"
               >
                 <Plus size={18} />
                 Add Benefit
@@ -384,19 +460,19 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 placeholder="Key"
                 value={newSpecKey}
                 onChange={(e) => setNewSpecKey(e.target.value)}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
               <input
                 type="text"
                 placeholder="Value"
                 value={newSpecValue}
                 onChange={(e) => setNewSpecValue(e.target.value)}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#EA580C] focus:border-transparent"
               />
               <button
                 type="button"
                 onClick={addSpecification}
-                className="px-4 py-3 bg-[#7BB661] text-white rounded-lg hover:bg-[#6B4E3D] transition-colors"
+                className="px-4 py-3 bg-[#EA580C] text-white rounded-lg hover:bg-[#D97706] transition-colors"
               >
                 <Plus size={20} />
               </button>
@@ -409,7 +485,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                 type="checkbox"
                 checked={product.is_active}
                 onChange={(e) => updateField('is_active', e.target.checked)}
-                className="w-5 h-5 text-[#7BB661] border-gray-300 rounded focus:ring-[#7BB661]"
+                className="w-5 h-5 text-[#EA580C] border-gray-300 rounded focus:ring-[#EA580C]"
               />
               <span className="font-semibold text-[#333333]">Active (visible to customers)</span>
             </label>
