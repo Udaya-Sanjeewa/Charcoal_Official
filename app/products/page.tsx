@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCart } from '@/contexts/CartContext';
-import { Filter, Grid2x2 as Grid, List, Loader2, ShoppingCart, Search } from 'lucide-react';
+import { Filter, Grid2x2 as Grid, List, Loader2, Search } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 
@@ -16,9 +15,7 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const { t } = useLanguage();
-  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -46,24 +43,8 @@ export default function Products() {
       return matchesCategory && matchesSearch;
     });
 
-  const handleAddToCart = async (product: Product) => {
-    const token = localStorage.getItem('user_token');
-    if (!token) {
-      if (confirm('You need to be logged in to add items to cart. Would you like to login?')) {
-        router.push('/user-login');
-      }
-      return;
-    }
-
-    setAddingToCart(product.id);
-    try {
-      await addToCart(product.id, product.name, product.price, product.image);
-      alert(`${product.name} added to cart!`);
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    } finally {
-      setAddingToCart(null);
-    }
+  const handleContactForProduct = () => {
+    router.push('/contact');
   };
 
   return (
@@ -198,31 +179,12 @@ export default function Products() {
                     </div>
 
                     {product.category !== 'rentals' ? (
-                      <div className="space-y-2">
-                        <button
-                          onClick={() => handleAddToCart(product)}
-                          disabled={addingToCart === product.id}
-                          className="w-full bg-[#7BB661] hover:bg-[#6B4E3D] text-white py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        >
-                          {addingToCart === product.id ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Adding...
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingCart className="h-4 w-4" />
-                              Add to Cart
-                            </>
-                          )}
-                        </button>
-                        <Link
-                          href={['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? `/products/${product.slug}` : '/contact'}
-                          className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
-                        >
-                          {['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? t('common.view_details') : t('common.contact_to_order')}
-                        </Link>
-                      </div>
+                      <Link
+                        href={['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? `/products/${product.slug}` : '/contact'}
+                        className="w-full btn-gradient text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                      >
+                        {['premium-oak-firewood', 'coconut-shell-charcoal', 'mixed-hardwood-bundle'].includes(product.slug) ? t('common.view_details') : t('common.contact_to_order')}
+                      </Link>
                     ) : (
                       <Link
                         href="/bbq-rentals"

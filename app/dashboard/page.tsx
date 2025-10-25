@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseClient } from '@/lib/supabase-client';
-import { useCart } from '@/contexts/CartContext';
 import {
   User,
   Package,
-  ShoppingCart,
   Settings,
   TrendingUp,
   Clock,
@@ -36,7 +34,6 @@ interface UserProfile {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { items, itemCount, totalAmount } = useCart();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
@@ -173,19 +170,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow">
-            <div className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">Cart Items</p>
-                  <p className="text-3xl font-bold text-slate-900">{itemCount}</p>
-                </div>
-                <div className="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <ShoppingCart className="h-6 w-6 text-orange-600" />
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 mb-8">
@@ -243,38 +227,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-6 border-b">
-                <h3 className="text-xl font-bold">Shopping Cart</h3>
-                <p className="text-slate-600">
-                  {itemCount === 0 ? 'Your cart is empty' : `${itemCount} item${itemCount !== 1 ? 's' : ''} in cart`}
-                </p>
-              </div>
-              <div className="p-6">
-                {itemCount > 0 ? (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-4 border-b">
-                      <span className="text-slate-600">Subtotal:</span>
-                      <span className="text-2xl font-bold text-slate-900">${totalAmount.toFixed(2)}</span>
-                    </div>
-                    <Link href="/cart" className="block">
-                      < button className="w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors font-semibold">
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        View Cart
-                      </button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <ShoppingCart className="h-12 w-12 mx-auto text-slate-300 mb-3" />
-                    <p className="text-slate-600 mb-4 text-sm">Start adding items to your cart</p>
-                    <Link href="/products">
-                      <button className="w-full">Browse Products</button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
 
             <div className="bg-white rounded-lg shadow">
               <div className="p-6 border-b">

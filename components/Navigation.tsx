@@ -3,12 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, Leaf, Globe, LogIn, ShoppingCart, User, LogOut, Heart } from 'lucide-react';
+import { Menu, X, Leaf, Globe, LogIn, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCart } from '@/contexts/CartContext';
-import { useWishlist } from '@/contexts/WishlistContext';
-import CartDrawer from './CartDrawer';
-import WishlistDrawer from './WishlistDrawer';
 
 export default function Navigation() {
   const router = useRouter();
@@ -16,12 +12,8 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showCartDrawer, setShowCartDrawer] = useState(false);
-  const [showWishlistDrawer, setShowWishlistDrawer] = useState(false);
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
-  const { itemCount } = useCart();
-  const { itemCount: wishlistCount } = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,24 +88,6 @@ export default function Navigation() {
             >
               {t('nav.contact')}
             </Link>
-
-            <button onClick={() => setShowWishlistDrawer(true)} className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
-              <Heart size={22} />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {wishlistCount}
-                </span>
-              )}
-            </button>
-
-            <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
-              <ShoppingCart size={22} />
-              {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </button>
 
             {user ? (
               <div className="relative">
@@ -225,23 +199,6 @@ export default function Navigation() {
           </div>
 
           <div className="md:hidden flex items-center gap-4">
-            <button onClick={() => setShowWishlistDrawer(true)} className="relative text-[#1a1a1a]">
-              <Heart size={22} />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {wishlistCount}
-                </span>
-              )}
-            </button>
-
-            <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a]">
-              <ShoppingCart size={22} />
-              {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-[#1a1a1a] drop-shadow-sm"
@@ -396,8 +353,6 @@ export default function Navigation() {
           </div>
         )}
       </div>
-      <CartDrawer open={showCartDrawer} onOpenChange={setShowCartDrawer} />
-      <WishlistDrawer open={showWishlistDrawer} onOpenChange={setShowWishlistDrawer} />
     </nav>
   );
 }
