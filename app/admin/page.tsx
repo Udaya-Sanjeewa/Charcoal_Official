@@ -6,6 +6,7 @@ import { type Product } from '@/lib/types';
 import { getAllProducts, updateProduct, deleteProduct as deleteProductApi } from '@/lib/products';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, Edit, Trash2, Eye, EyeOff, Loader2, LogOut, Package, TrendingUp, ShoppingCart, DollarSign, BarChart3, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function AdminPanel() {
   const { isAuthenticated, loading: authLoading, logout, user } = useAuth();
@@ -35,18 +36,25 @@ export default function AdminPanel() {
   };
 
   const toggleProductStatus = async (id: string, currentStatus: boolean) => {
-    const success = await updateProduct(id, { is_active: !currentStatus });
+    const newStatus = !currentStatus;
+    const success = await updateProduct(id, { is_active: newStatus });
     if (success) {
+      toast.success(`Product ${newStatus ? 'activated' : 'deactivated'} successfully!`);
       fetchProducts();
+    } else {
+      toast.error('Failed to update product status');
     }
   };
 
-  const handleDeleteProduct = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+  const handleDeleteProduct = async (id: string, productName: string) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) return;
 
     const success = await deleteProductApi(id);
     if (success) {
+      toast.success('Product deleted successfully!');
       fetchProducts();
+    } else {
+      toast.error('Failed to delete product');
     }
   };
 
@@ -233,7 +241,7 @@ export default function AdminPanel() {
                             <Edit size={18} />
                           </Link>
                           <button
-                            onClick={() => handleDeleteProduct(product.id)}
+                            onClick={() => handleDeleteProduct(product.id, product.name)}
                             className="p-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-110 transition-all duration-300"
                           >
                             <Trash2 size={18} />
