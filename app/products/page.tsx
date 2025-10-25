@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { Filter, Grid2x2 as Grid, List, Loader2, ShoppingCart } from 'lucide-react';
+import { Filter, Grid2x2 as Grid, List, Loader2, ShoppingCart, Search } from 'lucide-react';
 import { getActiveProducts } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 
@@ -13,6 +13,7 @@ export default function Products() {
   const router = useRouter();
   const [viewMode, setViewMode] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
@@ -36,9 +37,14 @@ export default function Products() {
     { id: 'rentals', name: t('products.rentals') }
   ];
 
-  const filteredProducts = selectedCategory === 'all'
-    ? products
-    : products.filter(product => product.category === selectedCategory);
+  const filteredProducts = products
+    .filter(product => {
+      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+      const matchesSearch = searchQuery === '' ||
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
 
   const handleAddToCart = async (product: Product) => {
     const token = localStorage.getItem('user_token');
@@ -74,12 +80,28 @@ export default function Products() {
         </div>
       </section>
 
+      {/* Search Bar */}
+      <section className="py-6 bg-white border-b">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Filters and View Controls */}
       <section className="py-8 bg-white border-b">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Category Filter */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 overflow-x-auto w-full md:w-auto">
               <Filter className="text-[#333333]" size={20} />
               <div className="flex gap-2">
                 {categories.map((category) => (
@@ -137,18 +159,20 @@ export default function Products() {
                   viewMode === 'list' ? 'md:flex' : ''
                 }`}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-1/3' : ''} h-64 bg-gray-200 overflow-hidden`}>
-                  <img 
-                    src={product.image} 
+                <Link href={`/products/${product.slug}`} className={`${viewMode === 'list' ? 'md:w-1/3' : ''} h-64 bg-gray-200 overflow-hidden block`}>
+                  <img
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   />
-                </div>
+                </Link>
                 <div className={`p-6 ${viewMode === 'list' ? 'md:w-2/3 md:flex md:flex-col md:justify-between' : ''}`}>
                   <div>
-                    <h3 className="text-2xl font-bold text-[#333333] mb-2">
-                      {t(`product.${product.name.toLowerCase().replace(/\s+/g, '_')}`)}
-                    </h3>
+                    <Link href={`/products/${product.slug}`}>
+                      <h3 className="text-2xl font-bold text-[#333333] mb-2 hover:text-[#7BB661] transition-colors cursor-pointer">
+                        {t(`product.${product.name.toLowerCase().replace(/\s+/g, '_')}`)}
+                      </h3>
+                    </Link>
                     <p className="text-gray-600 mb-4">{product.description}</p>
                     
                     {/* Features */}

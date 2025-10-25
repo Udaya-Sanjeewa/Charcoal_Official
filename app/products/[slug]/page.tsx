@@ -3,19 +3,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Star, Truck, Shield, Leaf, Phone, Mail, Loader2, ShoppingCart, Heart } from 'lucide-react';
 import { getProductBySlug } from '@/lib/products';
 import { type Product } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 export default function ProductDetail({ params }: { params: { slug: string } }) {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedImage, setSelectedImage] = useState(0);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [togglingWishlist, setTogglingWishlist] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -62,6 +65,25 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
       console.error('Error adding to cart:', error);
     } finally {
       setAddingToCart(false);
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+    const token = localStorage.getItem('user_token');
+    if (!token) {
+      if (confirm('You need to be logged in to add items to wishlist. Would you like to login?')) {
+        router.push('/user-login');
+      }
+      return;
+    }
+
+    setTogglingWishlist(true);
+    try {
+      await toggleWishlist(product.id, product.name, product.price, product.image, product.slug);
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    } finally {
+      setTogglingWishlist(false);
     }
   };
 
@@ -179,12 +201,24 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
                     </>
                   )}
                 </button>
-                <Link
-                  href="/contact"
-                  className="flex-1 border-2 border-[#7BB661] text-[#7BB661] py-4 px-6 rounded-xl font-semibold text-center hover:bg-[#7BB661] hover:text-white transition-all duration-300 flex items-center justify-center"
+                <button
+                  onClick={handleToggleWishlist}
+                  disabled={togglingWishlist}
+                  className={`border-2 py-6 px-6 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 ${
+                    isInWishlist(product.id)
+                      ? 'bg-red-500 text-white border-red-500 hover:bg-red-600'
+                      : 'border-[#7BB661] text-[#7BB661] hover:bg-[#7BB661] hover:text-white'
+                  }`}
                 >
-                  Get Quote
-                </Link>
+                  {togglingWishlist ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+                      {isInWishlist(product.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                    </>
+                  )}
+                </button>
               </div>
 
               <div className="grid grid-cols-3 gap-4 py-6 border-t border-gray-200">

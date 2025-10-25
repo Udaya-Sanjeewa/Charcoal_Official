@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, Leaf, Globe, LogIn, ShoppingCart, User, LogOut } from 'lucide-react';
+import { Menu, X, Leaf, Globe, LogIn, ShoppingCart, User, LogOut, Heart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 import CartDrawer from './CartDrawer';
 
 export default function Navigation() {
@@ -18,6 +19,7 @@ export default function Navigation() {
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
   const { itemCount } = useCart();
+  const { itemCount: wishlistCount } = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,6 +93,15 @@ export default function Navigation() {
               className="text-[#1a1a1a] hover:text-[#7BB661] transition-colors font-semibold drop-shadow-sm"
             >
               {t('nav.contact')}
+            </Link>
+
+            <Link href="/wishlist" className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
+              <Heart size={22} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a] hover:text-[#7BB661] transition-colors">
@@ -212,6 +223,15 @@ export default function Navigation() {
           </div>
 
           <div className="md:hidden flex items-center gap-4">
+            <Link href="/wishlist" className="relative text-[#1a1a1a]">
+              <Heart size={22} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
             <button onClick={() => setShowCartDrawer(true)} className="relative text-[#1a1a1a]">
               <ShoppingCart size={22} />
               {itemCount > 0 && (
