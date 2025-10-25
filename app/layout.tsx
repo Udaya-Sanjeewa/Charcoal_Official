@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'EcoFuel Pro - Premium Firewood & Coconut Shell Charcoal',
@@ -22,6 +23,7 @@ export default function RootLayout({
           <Navigation />
           <main>{children}</main>
           <WhatsAppFloat />
+          <Toaster position="top-right" richColors />
         </LanguageProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseClient } from '@/lib/supabase-client';
 import { MapPin, Plus, Edit, Trash2, Check, Loader2, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Address {
   id: string;
@@ -119,26 +120,28 @@ export default function AddressesPage() {
 
         if (error) throw error;
       } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not authenticated');
+
         const { error } = await supabase
           .from('user_addresses')
-          .insert([formData]);
+          .insert([{ ...formData, user_id: user.id }]);
 
         if (error) throw error;
       }
 
       await fetchAddresses();
       setShowDialog(false);
-    } catch (error) {
+      toast.success(editingAddress ? 'Address updated successfully' : 'Address added successfully');
+    } catch (error: any) {
       console.error('Error saving address:', error);
-      alert('Failed to save address');
+      toast.error(error.message || 'Failed to save address');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this address?')) return;
-
     const token = localStorage.getItem('user_token');
     if (!token) return;
 
@@ -151,9 +154,10 @@ export default function AddressesPage() {
 
       if (error) throw error;
       await fetchAddresses();
-    } catch (error) {
+      toast.success('Address deleted successfully');
+    } catch (error: any) {
       console.error('Error deleting address:', error);
-      alert('Failed to delete address');
+      toast.error(error.message || 'Failed to delete address');
     }
   };
 
@@ -170,8 +174,10 @@ export default function AddressesPage() {
 
       if (error) throw error;
       await fetchAddresses();
-    } catch (error) {
+      toast.success('Default address updated');
+    } catch (error: any) {
       console.error('Error setting default address:', error);
+      toast.error(error.message || 'Failed to set default address');
     }
   };
 
@@ -236,7 +242,11 @@ export default function AddressesPage() {
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(address.id)}
+                      onClick={() => {
+                        if (window.confirm('Are you sure you want to delete this address?')) {
+                          handleDelete(address.id);
+                        }
+                      }}
                       className="p-2 hover:bg-red-50 rounded transition-colors"
                     >
                       <Trash2 className="h-4 w-4 text-red-600" />
