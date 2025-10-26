@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
-import { supabase } from '@/lib/supabase-client';
+import { supabase, getSupabaseClient } from '@/lib/supabase-client';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, CreditCard, Truck, Check, MapPin } from 'lucide-react';
 import Link from 'next/link';
@@ -70,14 +70,24 @@ export default function CheckoutPage() {
   const checkUser = async () => {
     const token = localStorage.getItem('user_token');
     if (token) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabaseClient = getSupabaseClient(token);
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
+      if (error) {
+        console.error('Error getting user:', error);
+        return;
+      }
+      console.log('User authenticated:', user?.id);
       setUser(user);
+    } else {
+      console.log('No user token found');
     }
   };
 
   const loadUserAddresses = async () => {
-    if (!user) {
-      console.log('No user found, skipping address load');
+    const token = localStorage.getItem('user_token');
+
+    if (!user || !token) {
+      console.log('No user or token found, skipping address load');
       setLoadingAddresses(false);
       return;
     }
@@ -86,7 +96,8 @@ export default function CheckoutPage() {
     setLoadingAddresses(true);
 
     try {
-      const { data, error } = await supabase
+      const supabaseClient = getSupabaseClient(token);
+      const { data, error } = await supabaseClient
         .from('user_addresses')
         .select('*')
         .eq('user_id', user.id)
@@ -170,7 +181,11 @@ export default function CheckoutPage() {
       const orderNum = generateOrderNumber();
       const sessionId = user ? null : `guest_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
-      const { data: order, error: orderError } = await supabase
+      // Use token-based client for authenticated users, regular client for guests
+      const token = localStorage.getItem('user_token');
+      const supabaseClient = (user && token) ? getSupabaseClient(token) : supabase;
+
+      const { data: order, error: orderError } = await supabaseClient
         .from('orders')
         .insert({
           user_id: user?.id || null,
@@ -197,7 +212,7 @@ export default function CheckoutPage() {
         quantity: item.quantity
       }));
 
-      const { error: itemsError } = await supabase
+      const { error: itemsError } = await supabaseClient
         .from('order_items')
         .insert(orderItems);
 
