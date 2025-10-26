@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase-client';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, CreditCard, Truck, Check } from 'lucide-react';
 import Link from 'next/link';
+import type { User } from '@supabase/supabase-js';
 
 interface Address {
   id: string;
@@ -26,7 +26,7 @@ interface Address {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart } = useCart();
-  const { user } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
@@ -57,10 +57,19 @@ export default function CheckoutPage() {
   }, [items, orderComplete, router]);
 
   useEffect(() => {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       loadUserAddresses();
     }
   }, [user]);
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+  };
 
   const loadUserAddresses = async () => {
     if (!user) return;
