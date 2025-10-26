@@ -1,10 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Phone, Mail, MapPin, Clock, Send, CircleCheck as CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Contact() {
+  const searchParams = useSearchParams();
+  const packageType = searchParams.get('package');
+  const inquiryType = searchParams.get('type');
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +19,22 @@ export default function Contact() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (packageType && inquiryType === 'bbq-rental') {
+      const packageNames: { [key: string]: string } = {
+        'basic': 'Basic BBQ Package - $75/day',
+        'premium': 'Premium BBQ Package - $120/day',
+        'commercial': 'Commercial BBQ Package - $200/day'
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        subject: `BBQ Rental Inquiry - ${packageNames[packageType] || packageType}`,
+        message: `I'm interested in the ${packageNames[packageType] || packageType}. Please provide more details about availability and booking.\n\n`
+      }));
+    }
+  }, [packageType, inquiryType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

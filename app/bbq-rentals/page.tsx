@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Calendar, Clock, Users, Truck, Shield, Award, Phone, Mail, CircleCheck as CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BBQRentals() {
+  const router = useRouter();
   const [selectedPackage, setSelectedPackage] = useState('basic');
   const { t } = useLanguage();
 
@@ -193,14 +195,17 @@ export default function BBQRentals() {
                   </div>
 
                   <button
-                    onClick={() => setSelectedPackage(pkg.id)}
+                    onClick={() => {
+                      setSelectedPackage(pkg.id);
+                      router.push(`/contact?package=${pkg.id}&type=bbq-rental`);
+                    }}
                     className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
                       selectedPackage === pkg.id
                         ? 'btn-gradient text-white'
                         : 'border-2 border-[#7BB661] text-[#7BB661] hover:bg-[#7BB661] hover:text-white'
                     }`}
                   >
-                    {selectedPackage === pkg.id ? t('bbq.selected') : t('bbq.select_package')}
+                    {selectedPackage === pkg.id ? t('bbq.inquire_now') : t('bbq.select_package')}
                   </button>
                 </div>
               </div>
