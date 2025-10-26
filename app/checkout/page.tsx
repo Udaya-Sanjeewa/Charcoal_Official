@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/lib/supabase-client';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, CreditCard, Truck, Check } from 'lucide-react';
+import { ShoppingBag, CreditCard, Truck, Check, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import type { User } from '@supabase/supabase-js';
 
@@ -29,6 +29,7 @@ export default function CheckoutPage() {
   const [user, setUser] = useState<User | null>(null);
 
   const [loading, setLoading] = useState(false);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -75,13 +76,17 @@ export default function CheckoutPage() {
   };
 
   const loadUserAddresses = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('No user found, skipping address load');
+      setLoadingAddresses(false);
+      return;
+    }
+
+    console.log('Loading addresses for user:', user.id);
+    setLoadingAddresses(true);
 
     try {
-      const token = localStorage.getItem('user_token');
-      const client = token ? supabase : supabase;
-
-      const { data, error } = await client
+      const { data, error } = await supabase
         .from('user_addresses')
         .select('*')
         .eq('user_id', user.id)
@@ -89,18 +94,30 @@ export default function CheckoutPage() {
 
       if (error) {
         console.error('Error loading addresses:', error);
+        setLoadingAddresses(false);
         return;
       }
 
-      if (data) {
+      console.log('Loaded addresses:', data);
+
+      if (data && data.length > 0) {
         setAddresses(data);
         const defaultAddress = data.find(addr => addr.is_default);
         if (defaultAddress) {
           setSelectedAddressId(defaultAddress.id);
+          console.log('Selected default address:', defaultAddress.id);
+        } else {
+          setSelectedAddressId(data[0].id);
+          console.log('Selected first address:', data[0].id);
         }
+      } else {
+        console.log('No addresses found for user');
+        setAddresses([]);
       }
     } catch (error) {
       console.error('Error loading addresses:', error);
+    } finally {
+      setLoadingAddresses(false);
     }
   };
 
@@ -260,51 +277,85 @@ export default function CheckoutPage() {
                   <h2 className="text-2xl font-bold text-[#333333]">Shipping Information</h2>
                 </div>
 
-                {user && addresses.length > 0 && !showNewAddressForm && (
-                  <div className="space-y-3 mb-4">
-                    <label className="font-semibold text-[#333333]">Select Delivery Address</label>
-                    {addresses.map((address) => (
-                      <div
-                        key={address.id}
-                        onClick={() => handleAddressSelect(address.id)}
-                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          selectedAddressId === address.id
-                            ? 'border-[#7BB661] bg-green-50'
-                            : 'border-gray-200 hover:border-[#7BB661]'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-[#333333]">{address.label}</span>
-                              {address.is_default && (
-                                <span className="text-xs bg-[#7BB661] text-white px-2 py-0.5 rounded-full">
-                                  Default
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600">{address.full_name}</p>
-                            <p className="text-sm text-gray-600">{address.address_line1}</p>
-                            {address.address_line2 && (
-                              <p className="text-sm text-gray-600">{address.address_line2}</p>
-                            )}
-                            <p className="text-sm text-gray-600">
-                              {address.city}, {address.state} {address.zip_code}
-                            </p>
-                            <p className="text-sm text-gray-600">{address.phone}</p>
-                          </div>
-                        </div>
+                {user && !showNewAddressForm ? (
+                  loadingAddresses ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Loading your addresses...</p>
+                    </div>
+                  ) : addresses.length > 0 ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <MapPin className="text-[#333333]" size={20} />
+                        <h3 className="text-lg font-bold text-[#333333]">Saved Addresses</h3>
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={handleUseNewAddress}
-                      className="text-[#7BB661] hover:text-[#6A9B51] font-semibold"
-                    >
-                      + Use a different address
-                    </button>
-                  </div>
-                )}
+
+                      <div className="space-y-3">
+                        {addresses.map((address) => (
+                          <div
+                            key={address.id}
+                            onClick={() => handleAddressSelect(address.id)}
+                            className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                              selectedAddressId === address.id
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-semibold text-[#333333]">{address.label}</span>
+                                  {address.is_default && (
+                                    <span className="text-xs bg-blue-500 text-white px-2 py-0.5 rounded">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-700 mb-1">{address.full_name}</p>
+                                <p className="text-sm text-gray-600">{address.phone}</p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {address.address_line1}
+                                  {address.address_line2 && `, ${address.address_line2}`}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {address.city}, {address.state}, {address.zip_code}
+                                </p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                                selectedAddressId === address.id
+                                  ? 'border-blue-500 bg-blue-500'
+                                  : 'border-gray-300'
+                              }`}>
+                                {selectedAddressId === address.id && (
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleUseNewAddress}
+                        className="mt-4 px-4 py-2 border-2 border-gray-300 rounded-lg text-gray-700 hover:border-gray-400 font-medium transition-colors"
+                      >
+                        Use Different Address
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 bg-gray-50 rounded-xl">
+                      <MapPin className="mx-auto text-gray-400 mb-2" size={32} />
+                      <p className="text-gray-600 mb-4">You don't have any saved addresses yet</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewAddressForm(true)}
+                        className="px-4 py-2 bg-[#7BB661] text-white rounded-lg hover:bg-[#6A9B51] font-medium transition-colors"
+                      >
+                        Add Address
+                      </button>
+                    </div>
+                  )
+                ) : null}
 
                 {(!user || addresses.length === 0 || showNewAddressForm) && (
                   <div className="grid md:grid-cols-2 gap-4">
