@@ -205,7 +205,7 @@ export default function BBQRentals() {
                         : 'border-2 border-[#7BB661] text-[#7BB661] hover:bg-[#7BB661] hover:text-white'
                     }`}
                   >
-                    {selectedPackage === pkg.id ? t('bbq.inquire_now') : t('bbq.select_package')}
+                    {selectedPackage === pkg.id ? t('bbq.selected') : t('bbq.select_package')}
                   </button>
                 </div>
               </div>
