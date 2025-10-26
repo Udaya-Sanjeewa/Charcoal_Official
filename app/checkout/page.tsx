@@ -175,9 +175,10 @@ export default function CheckoutPage() {
       setOrderNumber(orderNum);
       setOrderComplete(true);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error placing order:', error);
-      alert('Failed to place order. Please try again.');
+      const errorMessage = error?.message || 'Failed to place order. Please try again.';
+      alert(`Error: ${errorMessage}\n\nPlease check the console for more details.`);
     } finally {
       setLoading(false);
     }
