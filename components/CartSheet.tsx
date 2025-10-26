@@ -155,7 +155,7 @@ export default function CartSheet() {
                   asChild
                   onClick={handleCheckout}
                 >
-                  <Link href="/contact">
+                  <Link href="/checkout">
                     Proceed to Checkout
                   </Link>
                 </Button>
