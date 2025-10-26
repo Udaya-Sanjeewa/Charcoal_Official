@@ -67,25 +67,40 @@ export default function CheckoutPage() {
   }, [user]);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
+    const token = localStorage.getItem('user_token');
+    if (token) {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    }
   };
 
   const loadUserAddresses = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('user_addresses')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('is_default', { ascending: false });
+    try {
+      const token = localStorage.getItem('user_token');
+      const client = token ? supabase : supabase;
 
-    if (!error && data) {
-      setAddresses(data);
-      const defaultAddress = data.find(addr => addr.is_default);
-      if (defaultAddress) {
-        setSelectedAddressId(defaultAddress.id);
+      const { data, error } = await client
+        .from('user_addresses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('is_default', { ascending: false });
+
+      if (error) {
+        console.error('Error loading addresses:', error);
+        return;
       }
+
+      if (data) {
+        setAddresses(data);
+        const defaultAddress = data.find(addr => addr.is_default);
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress.id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading addresses:', error);
     }
   };
 
