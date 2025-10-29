@@ -19,7 +19,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  X
+  X,
+  ArrowLeft,
+  LayoutDashboard
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -194,11 +196,20 @@ export default function AdminOrdersPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 pt-16">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-            Order Management
-          </h1>
-          <p className="text-slate-600">View and manage customer orders</p>
+        <div className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+              Order Management
+            </h1>
+            <p className="text-slate-600">View and manage customer orders</p>
+          </div>
+          <button
+            onClick={() => router.push('/admin')}
+            className="bg-gradient-to-r from-slate-600 to-slate-700 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            <LayoutDashboard size={20} />
+            Back to Dashboard
+          </button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
