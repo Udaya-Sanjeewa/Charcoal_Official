@@ -109,7 +109,7 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
+      <section className="relative h-[70vh] md:h-[75vh] flex items-center justify-center text-white overflow-hidden">
         {/* Video Background */}
         <video
           autoPlay
