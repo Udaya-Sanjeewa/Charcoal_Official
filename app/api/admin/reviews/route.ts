@@ -15,13 +15,9 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (!verifyResponse.ok) {
+    if (authError || !user) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
@@ -51,13 +47,9 @@ export async function POST(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (!verifyResponse.ok) {
+    if (authError || !user) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
@@ -102,13 +94,9 @@ export async function PATCH(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (!verifyResponse.ok) {
+    if (authError || !user) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
@@ -155,13 +143,9 @@ export async function DELETE(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (!verifyResponse.ok) {
+    if (authError || !user) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
