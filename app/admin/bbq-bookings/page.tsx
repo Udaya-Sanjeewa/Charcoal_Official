@@ -119,16 +119,30 @@ export default function BBQBookingsAdmin() {
   };
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error('Please log in as admin to access this page');
+      router.push('/login');
+      return;
+    }
+
     if (isAuthenticated) {
       fetchBookings();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authLoading, router]);
 
   useEffect(() => {
     filterBookings();
   }, [searchTerm, statusFilter, bookings]);
 
   if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />

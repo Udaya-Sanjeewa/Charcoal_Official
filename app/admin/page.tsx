@@ -15,10 +15,16 @@ export default function AdminPanel() {
   const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error('Please log in as admin to access this page');
+      window.location.href = '/login';
+      return;
+    }
+
     if (isAuthenticated) {
       fetchProducts();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authLoading]);
 
   if (authLoading) {
     return (
@@ -26,6 +32,10 @@ export default function AdminPanel() {
         <Loader2 className="animate-spin text-blue-600" size={48} />
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   const fetchProducts = async () => {
