@@ -78,6 +78,13 @@ export default function AdminPanel() {
           </div>
           <div className="flex gap-3">
             <Link
+              href="/admin/orders"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              <ShoppingCart size={20} />
+              Orders
+            </Link>
+            <Link
               href="/admin/products/new"
               className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:shadow-xl hover:scale-105 transition-all duration-300"
             >
