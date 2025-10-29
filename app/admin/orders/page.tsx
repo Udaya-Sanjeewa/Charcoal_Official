@@ -94,34 +94,50 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, status: string, paymentStatus?: string) => {
+  const updateOrderStatus = async (orderId: string, status?: string, paymentStatus?: string) => {
     try {
+      console.log('Updating order:', { orderId, status, paymentStatus });
+
       const token = localStorage.getItem('admin_token');
+      if (!token) {
+        toast.error('Not authenticated');
+        return;
+      }
+
+      const payload: any = { orderId };
+      if (status !== undefined) payload.status = status;
+      if (paymentStatus !== undefined) payload.paymentStatus = paymentStatus;
+
+      console.log('Sending payload:', payload);
+
       const response = await fetch('/api/admin/orders', {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          orderId,
-          status,
-          ...(paymentStatus && { paymentStatus })
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error('Failed to update order');
+      const data = await response.json();
+      console.log('Response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update order');
+      }
 
       toast.success('Order updated successfully');
-      fetchOrders();
+      await fetchOrders();
 
       if (selectedOrder?.id === orderId) {
-        setShowDetailsModal(false);
-        setSelectedOrder(null);
+        const updatedOrder = orders.find(o => o.id === orderId);
+        if (updatedOrder) {
+          setSelectedOrder(updatedOrder);
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating order:', error);
-      toast.error('Failed to update order');
+      toast.error(error.message || 'Failed to update order');
     }
   };
 
@@ -447,37 +463,87 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              <div className="border-t border-slate-200 pt-6">
-                <h3 className="text-sm font-semibold text-slate-700 mb-3">Update Order Status</h3>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => updateOrderStatus(selectedOrder.id, 'processing')}
-                    disabled={selectedOrder.status === 'processing'}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Mark as Processing
-                  </button>
-                  <button
-                    onClick={() => updateOrderStatus(selectedOrder.id, 'shipped')}
-                    disabled={selectedOrder.status === 'shipped'}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Mark as Shipped
-                  </button>
-                  <button
-                    onClick={() => updateOrderStatus(selectedOrder.id, 'delivered')}
-                    disabled={selectedOrder.status === 'delivered'}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Mark as Delivered
-                  </button>
-                  <button
-                    onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled')}
-                    disabled={selectedOrder.status === 'cancelled'}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Cancel Order
-                  </button>
+              <div className="border-t border-slate-200 pt-6 space-y-6">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <DollarSign size={16} />
+                    Payment Verification
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, undefined, 'paid')}
+                      disabled={selectedOrder.payment_status === 'paid'}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <CheckCircle size={16} />
+                      Mark as Paid
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, undefined, 'pending')}
+                      disabled={selectedOrder.payment_status === 'pending'}
+                      className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Clock size={16} />
+                      Mark as Pending
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, undefined, 'failed')}
+                      disabled={selectedOrder.payment_status === 'failed'}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <XCircle size={16} />
+                      Mark as Failed
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <Package size={16} />
+                    Order Status
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, 'pending', undefined)}
+                      disabled={selectedOrder.status === 'pending'}
+                      className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Clock size={16} />
+                      Pending
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, 'processing', undefined)}
+                      disabled={selectedOrder.status === 'processing'}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Package size={16} />
+                      Processing
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, 'shipped', undefined)}
+                      disabled={selectedOrder.status === 'shipped'}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Truck size={16} />
+                      Shipped
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, 'delivered', undefined)}
+                      disabled={selectedOrder.status === 'delivered'}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <CheckCircle size={16} />
+                      Delivered
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled', undefined)}
+                      disabled={selectedOrder.status === 'cancelled'}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <XCircle size={16} />
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

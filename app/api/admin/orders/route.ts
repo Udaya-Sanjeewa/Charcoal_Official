@@ -54,6 +54,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      console.error('No authorization header');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -66,19 +67,24 @@ export async function PATCH(request: NextRequest) {
     });
 
     if (!verifyResponse.ok) {
+      console.error('Token verification failed');
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
     const body = await request.json();
     const { orderId, status, paymentStatus } = body;
 
+    console.log('Update request:', { orderId, status, paymentStatus });
+
     if (!orderId) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
     }
 
     const updates: any = { updated_at: new Date().toISOString() };
-    if (status) updates.status = status;
-    if (paymentStatus) updates.payment_status = paymentStatus;
+    if (status !== undefined) updates.status = status;
+    if (paymentStatus !== undefined) updates.payment_status = paymentStatus;
+
+    console.log('Applying updates:', updates);
 
     const { data, error } = await supabase
       .from('orders')
@@ -89,12 +95,21 @@ export async function PATCH(request: NextRequest) {
 
     if (error) {
       console.error('Error updating order:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({
+        error: error.message,
+        details: error,
+        hint: error.hint,
+        code: error.code
+      }, { status: 500 });
     }
 
-    return NextResponse.json({ order: data });
-  } catch (error) {
+    console.log('Order updated successfully:', data);
+    return NextResponse.json({ order: data, success: true });
+  } catch (error: any) {
     console.error('Error in admin orders update API:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({
+      error: error?.message || 'Internal server error',
+      stack: error?.stack
+    }, { status: 500 });
   }
 }
