@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { 
-  Leaf, 
-  Shield, 
-  Truck, 
-  Award, 
-  ChevronLeft, 
+import { supabase } from '@/lib/supabase-client';
+import {
+  Leaf,
+  Shield,
+  Truck,
+  Award,
+  ChevronLeft,
   ChevronRight,
   Star,
   Phone,
@@ -16,30 +17,48 @@ import {
   MapPin
 } from 'lucide-react';
 
+interface Review {
+  id: string;
+  customer_name: string;
+  customer_title: string;
+  review_text: string;
+  rating: number;
+  is_active: boolean;
+  display_order: number;
+}
+
 export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [testimonials, setTestimonials] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      rating: 5,
-      text: "Excellent quality firewood! Burns cleanly and lasts long. Fast delivery and great customer service.",
-      business: "Restaurant Owner"
-    },
-    {
-      name: "Mike Chen",
-      rating: 5,
-      text: "The coconut shell charcoal is amazing for BBQ. High heat, long burning, and eco-friendly. Highly recommend!",
-      business: "BBQ Enthusiast"
-    },
-    {
-      name: "Emma Wilson",
-      rating: 5,
-      text: "Professional service and premium quality products. EcoFuel Pro has been our reliable supplier for 2 years.",
-      business: "Hotel Manager"
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('customer_reviews')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setTestimonials(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const products = [
     {
@@ -268,51 +287,63 @@ export default function Home() {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              <div className="bg-[#FAF3E0] rounded-2xl p-8 md:p-12 text-center">
-                <div className="flex justify-center mb-6">
-                  {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-current" size={24} />
-                  ))}
-                </div>
-                <blockquote className="text-xl md:text-2xl text-[#1C1917] mb-6 leading-relaxed">
-                  "{testimonials[currentTestimonial].text}"
-                </blockquote>
-                <div>
-                  <h4 className="text-xl font-bold text-[#1C1917]">
-                    {testimonials[currentTestimonial].name}
-                  </h4>
-                  <p className="text-gray-600">{testimonials[currentTestimonial].business}</p>
-                </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Loading reviews...</p>
               </div>
+            ) : testimonials.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">No reviews available yet.</p>
+              </div>
+            ) : (
+              <div className="relative">
+                <div className="bg-[#FAF3E0] rounded-2xl p-8 md:p-12 text-center">
+                  <div className="flex justify-center mb-6">
+                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                      <Star key={i} className="text-yellow-400 fill-current" size={24} />
+                    ))}
+                  </div>
+                  <blockquote className="text-xl md:text-2xl text-[#1C1917] mb-6 leading-relaxed">
+                    "{testimonials[currentTestimonial].review_text}"
+                  </blockquote>
+                  <div>
+                    <h4 className="text-xl font-bold text-[#1C1917]">
+                      {testimonials[currentTestimonial].customer_name}
+                    </h4>
+                    <p className="text-gray-600">{testimonials[currentTestimonial].customer_title}</p>
+                  </div>
+                </div>
 
-              {/* Navigation buttons */}
-              <button
-                onClick={prevTestimonial}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <ChevronLeft className="text-[#1C1917]" size={24} />
-              </button>
-              <button
-                onClick={nextTestimonial}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <ChevronRight className="text-[#1C1917]" size={24} />
-              </button>
-            </div>
+                {/* Navigation buttons */}
+                <button
+                  onClick={prevTestimonial}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <ChevronLeft className="text-[#1C1917]" size={24} />
+                </button>
+                <button
+                  onClick={nextTestimonial}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <ChevronRight className="text-[#1C1917]" size={24} />
+                </button>
+              </div>
+            )}
 
             {/* Dots indicator */}
-            <div className="flex justify-center mt-8 space-x-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial ? 'bg-[#D97706]' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
+            {testimonials.length > 0 && (
+              <div className="flex justify-center mt-8 space-x-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentTestimonial ? 'bg-[#D97706]' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
