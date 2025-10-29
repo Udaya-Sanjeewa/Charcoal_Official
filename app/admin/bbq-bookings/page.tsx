@@ -61,20 +61,39 @@ export default function BBQBookingsAdmin() {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('admin_token');
+
+      if (!token) {
+        toast.error('No authentication token found. Please log in again.');
+        router.push('/login');
+        return;
+      }
+
       const response = await fetch('/api/admin/bbq-bookings', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      if (!response.ok) throw new Error('Failed to fetch bookings');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch bookings`);
+      }
 
       const data = await response.json();
+
+      if (!data.bookings) {
+        throw new Error('No bookings data received from server');
+      }
+
       setBookings(data.bookings);
       setFilteredBookings(data.bookings);
-    } catch (error) {
+
+      if (data.bookings.length === 0) {
+        toast.info('No bookings found yet');
+      }
+    } catch (error: any) {
       console.error('Error fetching bookings:', error);
-      toast.error('Failed to load bookings');
+      toast.error(error.message || 'Failed to load bookings');
     } finally {
       setLoading(false);
     }

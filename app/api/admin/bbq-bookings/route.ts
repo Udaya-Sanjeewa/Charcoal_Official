@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
   try {
     const token = verifyAdminToken(request);
     if (!token) {
+      console.error('BBQ Bookings API: Unauthorized - no valid token');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -36,11 +37,16 @@ export async function GET(request: NextRequest) {
       `)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('BBQ Bookings API: Supabase error:', error);
+      throw error;
+    }
 
-    return NextResponse.json({ bookings });
+    console.log('BBQ Bookings API: Successfully fetched', bookings?.length || 0, 'bookings');
+
+    return NextResponse.json({ bookings: bookings || [] });
   } catch (error: any) {
-    console.error('Error fetching bookings:', error);
+    console.error('BBQ Bookings API: Error fetching bookings:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch bookings' },
       { status: 500 }
