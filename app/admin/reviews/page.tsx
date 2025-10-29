@@ -120,13 +120,20 @@ export default function AdminReviewsPage() {
         },
       });
 
-      if (!response.ok) throw new Error('Failed to delete review');
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Delete failed:', data);
+        toast.error(data.error || 'Failed to delete review');
+        return;
+      }
 
       toast.success('Review deleted successfully');
-      fetchReviews();
+      await fetchReviews();
     } catch (error) {
       console.error('Error deleting review:', error);
       toast.error('Failed to delete review');
+      await fetchReviews();
     }
   };
 
@@ -145,13 +152,20 @@ export default function AdminReviewsPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to update review');
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Toggle failed:', data);
+        toast.error(data.error || 'Failed to update review');
+        return;
+      }
 
       toast.success(review.is_active ? 'Review hidden' : 'Review activated');
-      fetchReviews();
+      await fetchReviews();
     } catch (error) {
       console.error('Error updating review:', error);
       toast.error('Failed to update review');
+      await fetchReviews();
     }
   };
 
@@ -200,13 +214,20 @@ export default function AdminReviewsPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to update order');
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Update order failed:', data);
+        toast.error(data.error || 'Failed to update order');
+        return;
+      }
 
       toast.success('Display order updated');
-      fetchReviews();
+      await fetchReviews();
     } catch (error) {
       console.error('Error updating order:', error);
       toast.error('Failed to update order');
+      await fetchReviews();
     }
   };
 
