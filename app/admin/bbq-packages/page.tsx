@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Package, Plus, Edit, Trash2, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import SingleImageUploader from '@/components/SingleImageUploader';
 
 interface BBQPackage {
   id: string;
@@ -352,14 +353,11 @@ export default function AdminBBQPackagesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Image URL
+                  Package Image
                 </label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
+                <SingleImageUploader
+                  imageUrl={formData.image_url || null}
+                  onImageChange={(url) => setFormData({ ...formData, image_url: url || '' })}
                 />
               </div>
 
