@@ -58,24 +58,6 @@ export default function BBQBookingsAdmin() {
     notes: ''
   });
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchBookings();
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    filterBookings();
-  }, [searchTerm, statusFilter, bookings]);
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('admin_token');
@@ -116,6 +98,24 @@ export default function BBQBookingsAdmin() {
 
     setFilteredBookings(filtered);
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchBookings();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    filterBookings();
+  }, [searchTerm, statusFilter, bookings]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     logout();
