@@ -37,7 +37,7 @@ interface BBQBooking {
 
 export default function BBQBookingsAdmin() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, loading: authLoading, logout } = useAuth();
   const [bookings, setBookings] = useState<BBQBooking[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<BBQBooking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,16 +59,22 @@ export default function BBQBookingsAdmin() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-    } else {
+    if (isAuthenticated) {
       fetchBookings();
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     filterBookings();
   }, [searchTerm, statusFilter, bookings]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   const fetchBookings = async () => {
     try {
