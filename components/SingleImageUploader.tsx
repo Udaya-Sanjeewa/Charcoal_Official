@@ -21,13 +21,7 @@ export default function SingleImageUploader({
 
   const uploadImage = async (file: File): Promise<string | null> => {
     try {
-      const token = localStorage.getItem('admin_token');
-      if (!token) {
-        toast.error('You must be logged in to upload images');
-        return null;
-      }
-
-      const supabase = getSupabaseClient(token);
+      const supabase = getSupabaseClient();
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
