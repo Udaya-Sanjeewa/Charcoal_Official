@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Package, Plus, Edit, Trash2, ArrowLeft, LogOut } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface BBQPackage {
   id: string;
@@ -20,6 +23,7 @@ interface BBQPackage {
 
 export default function AdminBBQPackagesPage() {
   const router = useRouter();
+  const { isAuthenticated, loading: authLoading, logout } = useAuth();
   const [packages, setPackages] = useState<BBQPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -35,17 +39,22 @@ export default function AdminBBQPackagesPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      router.push('/login');
-      return;
+    if (isAuthenticated) {
+      fetchPackages();
     }
-    fetchPackages();
-  }, [router]);
+  }, [isAuthenticated]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue-600" size={48} />
+      </div>
+    );
+  }
 
   const fetchPackages = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch('/api/admin/bbq-packages', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -63,10 +72,6 @@ export default function AdminBBQPackagesPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    router.push('/login');
-  };
 
   const openCreateModal = () => {
     setEditingPackage(null);
@@ -98,7 +103,7 @@ export default function AdminBBQPackagesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('admin_token');
 
     const featuresArray = formData.features
       .split('\n')
@@ -135,18 +140,19 @@ export default function AdminBBQPackagesPage() {
 
       if (!response.ok) throw new Error('Failed to save package');
 
+      toast.success(editingPackage ? 'Package updated successfully!' : 'Package created successfully!');
       setShowModal(false);
       fetchPackages();
     } catch (error) {
       console.error('Error saving package:', error);
-      alert('Failed to save package');
+      toast.error('Failed to save package');
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this package?')) return;
 
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('admin_token');
     try {
       const response = await fetch(`/api/admin/bbq-packages?id=${id}`, {
         method: 'DELETE',
@@ -157,10 +163,11 @@ export default function AdminBBQPackagesPage() {
 
       if (!response.ok) throw new Error('Failed to delete package');
 
+      toast.success('Package deleted successfully!');
       fetchPackages();
     } catch (error) {
       console.error('Error deleting package:', error);
-      alert('Failed to delete package');
+      toast.error('Failed to delete package');
     }
   };
 
@@ -186,11 +193,13 @@ export default function AdminBBQPackagesPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button onClick={() => router.push('/admin')} variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Admin
-            </Button>
-            <Button onClick={handleLogout} variant="destructive">
+            <Link href="/admin">
+              <Button variant="outline">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Admin
+              </Button>
+            </Link>
+            <Button onClick={logout} variant="destructive">
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
