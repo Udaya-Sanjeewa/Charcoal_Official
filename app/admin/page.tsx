@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { type Product } from '@/lib/types';
 import { getAllProducts, updateProduct, deleteProduct as deleteProductApi } from '@/lib/products';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Edit, Trash2, Eye, EyeOff, Loader2, LogOut, Package, TrendingUp, ShoppingCart, DollarSign, BarChart3, Users, MessageSquare, Flame } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Loader2, LogOut, Package, TrendingUp, ShoppingCart, DollarSign, BarChart3, Users, MessageSquare, Flame, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminPanel() {
@@ -90,6 +90,13 @@ export default function AdminPanel() {
             >
               <Flame size={20} />
               BBQ Packages
+            </Link>
+            <Link
+              href="/admin/bbq-bookings"
+              className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              <Calendar size={20} />
+              BBQ Bookings
             </Link>
             <Link
               href="/admin/reviews"

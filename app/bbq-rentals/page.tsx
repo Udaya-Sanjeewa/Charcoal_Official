@@ -24,10 +24,22 @@ interface BBQPackage {
 
 export default function BBQRentals() {
   const router = useRouter();
-  const [selectedPackage, setSelectedPackage] = useState('');
+  const [selectedPackage, setSelectedPackage] = useState<BBQPackage | null>(null);
   const [packages, setPackages] = useState<BBQPackage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const { t } = useLanguage();
+
+  const [bookingForm, setBookingForm] = useState({
+    customer_name: '',
+    customer_email: '',
+    customer_phone: '',
+    customer_address: '',
+    rental_date: '',
+    return_date: '',
+    special_requests: ''
+  });
 
   useEffect(() => {
     fetchPackages();
@@ -76,6 +88,61 @@ export default function BBQRentals() {
       description: t('bbq.extended_rental_desc')
     }
   ];
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPackage) return;
+
+    setSubmitting(true);
+    try {
+      const totalAmount = selectedPackage.price;
+      const depositAmount = totalAmount * 0.3;
+      const balanceAmount = totalAmount - depositAmount;
+
+      const { data, error } = await supabase
+        .from('bbq_rental_bookings')
+        .insert([
+          {
+            package_id: selectedPackage.id,
+            customer_name: bookingForm.customer_name,
+            customer_email: bookingForm.customer_email,
+            customer_phone: bookingForm.customer_phone,
+            customer_address: bookingForm.customer_address,
+            rental_date: bookingForm.rental_date,
+            return_date: bookingForm.return_date,
+            special_requests: bookingForm.special_requests,
+            total_amount: totalAmount,
+            deposit_amount: depositAmount,
+            balance_amount: balanceAmount,
+            payment_status: 'pending',
+            booking_status: 'pending'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      alert(`Booking successful! Your reference number is: ${data.booking_reference}. We will contact you shortly to confirm your booking.`);
+
+      setShowBookingModal(false);
+      setBookingForm({
+        customer_name: '',
+        customer_email: '',
+        customer_phone: '',
+        customer_address: '',
+        rental_date: '',
+        return_date: '',
+        special_requests: ''
+      });
+      setSelectedPackage(null);
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      alert('Failed to create booking. Please try again or contact us directly.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] pt-16">
@@ -155,9 +222,7 @@ export default function BBQRentals() {
               {packages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className={`card-hover bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 ${
-                    selectedPackage === pkg.id ? 'border-[#7BB661]' : 'border-transparent'
-                  }`}
+                  className="card-hover bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-transparent transition-all duration-300"
                 >
                   {pkg.image_url && (
                     <div className="h-48 bg-gray-200 overflow-hidden">
@@ -196,16 +261,12 @@ export default function BBQRentals() {
 
                     <button
                       onClick={() => {
-                        setSelectedPackage(pkg.id);
-                        router.push(`/contact?package=${pkg.id}&type=bbq-rental`);
+                        setSelectedPackage(pkg);
+                        setShowBookingModal(true);
                       }}
-                      className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
-                        selectedPackage === pkg.id
-                          ? 'btn-gradient text-white'
-                          : 'border-2 border-[#7BB661] text-[#7BB661] hover:bg-[#7BB661] hover:text-white'
-                      }`}
+                      className="w-full py-3 rounded-xl font-semibold transition-all duration-300 border-2 border-[#7BB661] text-[#7BB661] hover:bg-[#7BB661] hover:text-white"
                     >
-                      {selectedPackage === pkg.id ? t('bbq.selected') : t('bbq.select_package')}
+                      {t('bbq.book_now')}
                     </button>
                   </div>
                 </div>
@@ -305,6 +366,157 @@ export default function BBQRentals() {
           </div>
         </div>
       </section>
+
+      {showBookingModal && selectedPackage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-[#333333]">Book {selectedPackage.name}</h2>
+              <p className="text-sm text-gray-500 mt-1">Complete the form below to reserve your BBQ rental</p>
+            </div>
+
+            <form onSubmit={handleBookingSubmit} className="p-6 space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={bookingForm.customer_name}
+                    onChange={(e) => setBookingForm({ ...bookingForm, customer_name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={bookingForm.customer_email}
+                    onChange={(e) => setBookingForm({ ...bookingForm, customer_email: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    value={bookingForm.customer_phone}
+                    onChange={(e) => setBookingForm({ ...bookingForm, customer_phone: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Rental Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={bookingForm.rental_date}
+                    onChange={(e) => setBookingForm({ ...bookingForm, rental_date: e.target.value })}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Return Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={bookingForm.return_date}
+                    onChange={(e) => setBookingForm({ ...bookingForm, return_date: e.target.value })}
+                    min={bookingForm.rental_date || new Date().toISOString().split('T')[0]}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Address *
+                </label>
+                <textarea
+                  value={bookingForm.customer_address}
+                  onChange={(e) => setBookingForm({ ...bookingForm, customer_address: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                  rows={2}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Special Requests
+                </label>
+                <textarea
+                  value={bookingForm.special_requests}
+                  onChange={(e) => setBookingForm({ ...bookingForm, special_requests: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7BB661] focus:border-transparent"
+                  rows={3}
+                  placeholder="Any special requirements or requests..."
+                />
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-gray-800 mb-2">Booking Summary</h3>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Package:</span>
+                    <span className="font-medium">{selectedPackage.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Amount:</span>
+                    <span className="font-semibold text-[#7BB661]">LKR {selectedPackage.price.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Deposit (30%):</span>
+                    <span className="font-medium">LKR {(selectedPackage.price * 0.3).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Balance:</span>
+                    <span className="font-medium">LKR {(selectedPackage.price * 0.7).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowBookingModal(false);
+                    setSelectedPackage(null);
+                  }}
+                  disabled={submitting}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 px-6 py-3 bg-[#7BB661] text-white rounded-lg font-semibold hover:bg-[#6da555] transition-all disabled:opacity-50"
+                >
+                  {submitting ? 'Submitting...' : 'Confirm Booking'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
