@@ -122,7 +122,7 @@ export default function Home() {
         </video>
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#4B2E05]/80 via-[#6B4E2E]/70 to-[#4B2E05]/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#6d5c42]/80 via-[#7bb661]/60 to-[#6d5c42]/80"></div>
 
         {/* Content */}
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -176,8 +176,8 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center card-hover bg-[#FAF3E0] p-8 rounded-2xl">
-              <div className="w-20 h-20 bg-[#D97706] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-center card-hover bg-white p-8 rounded-2xl shadow-md">
+              <div className="w-20 h-20 bg-[#7bb661] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Leaf className="text-white" size={32} />
               </div>
               <h3 className="text-2xl font-bold text-[#1C1917] mb-4">{t('home.why_choose.eco_friendly')}</h3>
@@ -186,8 +186,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center card-hover bg-[#FAF3E0] p-8 rounded-2xl">
-              <div className="w-20 h-20 bg-[#D97706] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-center card-hover bg-white p-8 rounded-2xl shadow-md">
+              <div className="w-20 h-20 bg-[#7bb661] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="text-white" size={32} />
               </div>
               <h3 className="text-2xl font-bold text-[#1C1917] mb-4">{t('home.why_choose.premium_quality')}</h3>
@@ -196,8 +196,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center card-hover bg-[#FAF3E0] p-8 rounded-2xl">
-              <div className="w-20 h-20 bg-[#D97706] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-center card-hover bg-white p-8 rounded-2xl shadow-md">
+              <div className="w-20 h-20 bg-[#7bb661] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Truck className="text-white" size={32} />
               </div>
               <h3 className="text-2xl font-bold text-[#1C1917] mb-4">{t('home.why_choose.fast_delivery')}</h3>
@@ -206,8 +206,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center card-hover bg-[#FAF3E0] p-8 rounded-2xl">
-              <div className="w-20 h-20 bg-[#D97706] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-center card-hover bg-white p-8 rounded-2xl shadow-md">
+              <div className="w-20 h-20 bg-[#7bb661] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Award className="text-white" size={32} />
               </div>
               <h3 className="text-2xl font-bold text-[#1C1917] mb-4">{t('home.why_choose.trusted')}</h3>
@@ -248,7 +248,7 @@ export default function Home() {
                   <p className="text-gray-600 mb-4">{product.description}</p>
                   <div className="flex justify-between items-center mb-4">
                     <div>
-                      <span className="text-3xl font-bold text-[#D97706]">{product.price}</span>
+                      <span className="text-3xl font-bold text-[#7bb661]">{product.price}</span>
                       <span className="text-gray-500 ml-2">{t(`common.${product.unit.replace(/\s+/g, '_')}`)}</span>
                     </div>
                   </div>
@@ -338,7 +338,7 @@ export default function Home() {
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentTestimonial ? 'bg-[#D97706]' : 'bg-gray-300'
+                      index === currentTestimonial ? 'bg-[#7bb661]' : 'bg-gray-300'
                     }`}
                   />
                 ))}
@@ -361,7 +361,7 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-[#D97706] rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-[#7bb661] rounded-full flex items-center justify-center mb-4">
                   <Phone className="text-white" size={24} />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{t('home.contact_cta.call_us')}</h3>
@@ -369,7 +369,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-[#D97706] rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-[#7bb661] rounded-full flex items-center justify-center mb-4">
                   <Mail className="text-white" size={24} />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{t('home.contact_cta.email_us')}</h3>
@@ -377,7 +377,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-[#D97706] rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-[#7bb661] rounded-full flex items-center justify-center mb-4">
                   <MapPin className="text-white" size={24} />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{t('home.contact_cta.visit_us')}</h3>
@@ -409,7 +409,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Leaf className="h-8 w-8 text-[#D97706]" />
+                <Leaf className="h-8 w-8 text-[#7bb661]" />
                 <span className="text-xl font-bold">EcoFuel Pro</span>
               </div>
               <p className="text-gray-300 leading-relaxed">
@@ -420,12 +420,12 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-bold mb-4">{t('footer.quick_links')}</h3>
               <div className="space-y-2">
-                <Link href="/" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.home')}</Link>
-                <Link href="/products" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.products')}</Link>
-                <Link href="/about" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.about')}</Link>
-                <Link href="/gallery" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.gallery')}</Link>
-                <Link href="/bbq-rentals" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.bbq_rentals')}</Link>
-                <Link href="/contact" className="block text-gray-300 hover:text-[#D97706] transition-colors">{t('nav.contact')}</Link>
+                <Link href="/" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.home')}</Link>
+                <Link href="/products" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.products')}</Link>
+                <Link href="/about" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.about')}</Link>
+                <Link href="/gallery" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.gallery')}</Link>
+                <Link href="/bbq-rentals" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.bbq_rentals')}</Link>
+                <Link href="/contact" className="block text-gray-300 hover:text-[#7bb661] transition-colors">{t('nav.contact')}</Link>
               </div>
             </div>
 
