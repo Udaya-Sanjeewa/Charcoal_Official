@@ -4,8 +4,6 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
@@ -14,6 +12,14 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
@@ -46,6 +52,14 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
@@ -93,6 +107,14 @@ export async function PATCH(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
@@ -142,6 +164,14 @@ export async function DELETE(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
