@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,38 +13,46 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
       }
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const { data: admin } = await supabaseAdmin
+      .from('admins')
+      .select('id, email')
+      .eq('email', token)
+      .single();
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    if (!admin) {
+      return NextResponse.json({ error: 'Unauthorized - Admin not found' }, { status: 401 });
     }
 
-    const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
 
     if (usersError) {
       console.error('Error fetching users:', usersError);
-      return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to fetch users: ' + usersError.message }, { status: 500 });
     }
 
-    const userIds = users.users.map(u => u.id);
+    if (!users || users.length === 0) {
+      return NextResponse.json({ users: [] });
+    }
 
-    const { data: profiles } = await supabase
+    const userIds = users.map(u => u.id);
+
+    const { data: profiles } = await supabaseAdmin
       .from('user_profiles')
       .select('*')
       .in('id', userIds);
 
-    const { data: orderStats } = await supabase
+    const { data: orderStats } = await supabaseAdmin
       .from('orders')
       .select('user_id, total_amount')
-      .in('user_id', userIds);
+      .in('user_id', userIds)
+      .not('user_id', 'is', null);
 
     const userStats = orderStats?.reduce((acc: any, order: any) => {
       if (!acc[order.user_id]) {
@@ -55,7 +63,7 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {});
 
-    const enrichedUsers = users.users.map(u => ({
+    const enrichedUsers = users.map(u => ({
       id: u.id,
       email: u.email,
       created_at: u.created_at,
@@ -82,18 +90,21 @@ export async function DELETE(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
       }
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const { data: admin } = await supabaseAdmin
+      .from('admins')
+      .select('id, email')
+      .eq('email', token)
+      .single();
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    if (!admin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -103,7 +114,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (deleteError) {
       console.error('Error deleting user:', deleteError);
