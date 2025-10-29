@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,42 +15,32 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
     });
 
-    const { data: admin } = await supabaseAdmin
-      .from('admins')
-      .select('id, email')
-      .eq('email', token)
-      .single();
-
-    if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized - Admin not found' }, { status: 401 });
+    if (!verifyResponse.ok) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+    const { data: profiles, error: profilesError } = await supabase
+      .from('user_profiles')
+      .select('*');
 
-    if (usersError) {
-      console.error('Error fetching users:', usersError);
-      return NextResponse.json({ error: 'Failed to fetch users: ' + usersError.message }, { status: 500 });
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError);
+      return NextResponse.json({ error: 'Failed to fetch user profiles' }, { status: 500 });
     }
 
-    if (!users || users.length === 0) {
+    if (!profiles || profiles.length === 0) {
       return NextResponse.json({ users: [] });
     }
 
-    const userIds = users.map(u => u.id);
+    const userIds = profiles.map(p => p.id);
 
-    const { data: profiles } = await supabaseAdmin
-      .from('user_profiles')
-      .select('*')
-      .in('id', userIds);
-
-    const { data: orderStats } = await supabaseAdmin
+    const { data: orderStats } = await supabase
       .from('orders')
       .select('user_id, total_amount')
       .in('user_id', userIds)
@@ -61,17 +53,17 @@ export async function GET(request: NextRequest) {
       acc[order.user_id].count += 1;
       acc[order.user_id].total += parseFloat(order.total_amount || 0);
       return acc;
-    }, {});
+    }, {}) || {};
 
-    const enrichedUsers = users.map(u => ({
-      id: u.id,
-      email: u.email,
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at,
-      confirmed_at: u.confirmed_at,
-      profile: profiles?.find(p => p.id === u.id),
-      order_count: userStats?.[u.id]?.count || 0,
-      total_spent: userStats?.[u.id]?.total || 0,
+    const enrichedUsers = profiles.map(profile => ({
+      id: profile.id,
+      email: profile.email || 'Email not available',
+      created_at: profile.created_at,
+      last_sign_in_at: null,
+      confirmed_at: profile.created_at,
+      profile: profile,
+      order_count: userStats[profile.id]?.count || 0,
+      total_spent: userStats[profile.id]?.total || 0,
     }));
 
     return NextResponse.json({ users: enrichedUsers });
@@ -90,21 +82,14 @@ export async function DELETE(request: NextRequest) {
 
     const token = authHeader.substring(7);
 
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+    const verifyResponse = await fetch(`${request.nextUrl.origin}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
     });
 
-    const { data: admin } = await supabaseAdmin
-      .from('admins')
-      .select('id, email')
-      .eq('email', token)
-      .single();
-
-    if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!verifyResponse.ok) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -114,10 +99,13 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    const { error: deleteError } = await supabase
+      .from('user_profiles')
+      .delete()
+      .eq('id', userId);
 
     if (deleteError) {
-      console.error('Error deleting user:', deleteError);
+      console.error('Error deleting user profile:', deleteError);
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 

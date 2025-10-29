@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       .insert([
         {
           id: data.user.id,
+          email: email,
           full_name: fullName,
           phone: phone || null,
         },
